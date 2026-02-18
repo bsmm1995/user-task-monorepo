@@ -1,0 +1,479 @@
+openapi: 3.1.0
+info:
+  title: User Management Service API
+  description: Service for managing users in the User-Task Monorepo system. Provides
+    complete CRUD operations and search capabilities.
+  contact:
+    name: Support Team
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8081
+    description: Generated server url
+tags:
+  - name: User Management
+    description: Endpoints for managing users
+paths:
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - User Management
+      summary: Get user by ID
+      description: Retrieves a single user by their unique identifier
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserResponse"
+        "400":
+          description: Bad Request - Invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags:
+        - User Management
+      summary: Update an existing user
+      description: Updates the details of an existing user
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutUserRequest"
+        required: true
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserResponse"
+        "400":
+          description: Bad Request - Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - Data integrity violation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - User Management
+      summary: Delete a user
+      description: Removes a user from the system
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: User deleted successfully
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/users:
+    get:
+      tags:
+        - User Management
+      summary: Get all users
+      description: "Retrieves a paginated list of all users, optionally filtered by\
+        \ a query string"
+      operationId: getAllUsers
+      parameters:
+        - name: query
+          in: query
+          description: "Search query for filtering by first name, last name or email"
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: "Page number (0-based). Minimum: 0, Maximum: 100000"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+            maximum: 100000
+        - name: size
+          in: query
+          description: "Number of elements per page. Minimum: 1, Maximum: 100"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUsersListResponse"
+        "400":
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - User Management
+      summary: Create a new user
+      description: Creates a new user in the system
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUserRequest"
+        required: true
+      responses:
+        "200":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserResponse"
+        "400":
+          description: Bad Request - Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - User already exists or data integrity violation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    PostUserRequest:
+      type: object
+      description: Request body for creating a new user
+      properties:
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Doe
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+          example: john.doe@example.com
+          maxLength: 100
+          minLength: 0
+          pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+      required:
+        - email
+        - firstName
+        - lastName
+    PutUserRequest:
+      type: object
+      description: Request body for updating a user
+      properties:
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Doe
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+          example: john.doe@example.com
+          maxLength: 100
+          minLength: 0
+          pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+      required:
+        - email
+        - firstName
+        - lastName
+    UserResponse:
+      type: object
+      description: User Domain Model
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the user
+          example: 1
+          readOnly: true
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Doe
+          maxLength: 50
+          minLength: 2
+          pattern: "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+          example: john.doe@example.com
+          maxLength: 100
+          minLength: 0
+          pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2024-01-15T10:30:00
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2024-01-15T15:45:30
+          readOnly: true
+      required:
+        - email
+        - firstName
+        - lastName
+    GetUserResponse:
+      type: object
+      description: Single user response envelope
+      properties:
+        data:
+          $ref: "#/components/schemas/UserResponse"
+          description: User data
+    GetUsersListResponse:
+      type: object
+      description: Paginated list of users response envelope
+      properties:
+        data:
+          type: array
+          description: List of users
+          items:
+            $ref: "#/components/schemas/UserResponse"
+        meta:
+          $ref: "#/components/schemas/Pagination"
+          description: Pagination metadata
+    ErrorBody:
+      type: object
+      description: Error Details Body
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: NOT_FOUND
+        message:
+          type: string
+          description: Human-readable error message
+          example: User not found
+        path:
+          type: string
+          description: URI path where the error occurred
+          example: /api/users/1
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        details:
+          type: array
+          description: "List of specific error details (e.g., validation failures)"
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      description: Specific Error Detail
+      properties:
+        field:
+          type: string
+          description: Field name that caused the error
+          example: email
+        code:
+          type: string
+          description: Validation error code
+          example: INVALID_FORMAT
+        message:
+          type: string
+          description: Detailed validation message
+          example: Email should be valid
+    ErrorResponse:
+      type: object
+      description: Standard Error Response Envelope
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+          description: Error body containing details
+    Pagination:
+      type: object
+      description: Pagination Metadata
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Current page number (0-based)
+          example: 0
+        size:
+          type: integer
+          format: int32
+          description: Number of elements per page
+          example: 10
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of elements
+          example: 100
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages
+          example: 10

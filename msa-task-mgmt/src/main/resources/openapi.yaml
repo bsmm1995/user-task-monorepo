@@ -1,0 +1,491 @@
+openapi: 3.1.0
+info:
+  title: Task Management Service API
+  description: "Service for managing tasks and assignments in the User-Task Monorepo\
+    \ system. Supports task tracking, user assignments, and status updates."
+  contact:
+    name: Support Team
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8082
+    description: Generated server url
+tags:
+  - name: Task Management
+    description: Endpoints for managing tasks
+paths:
+  /api/v1/tasks/{id}:
+    get:
+      tags:
+        - Task Management
+      summary: Get task by ID
+      description: Retrieves a single task by its unique identifier
+      operationId: getTaskById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the task to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Task found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTaskResponse"
+        "400":
+          description: Bad Request - Invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags:
+        - Task Management
+      summary: Update an existing task
+      description: Updates the details of an existing task
+      operationId: updateTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of the task to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTaskResponse"
+        "400":
+          description: Bad Request - Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - Data integrity violation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Task Management
+      summary: Delete a task
+      description: Removes a task from the system
+      operationId: deleteTask
+      parameters:
+        - name: id
+          in: path
+          description: ID of the task to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Task deleted successfully
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/tasks:
+    get:
+      tags:
+        - Task Management
+      summary: Get all tasks
+      description: "Retrieves a paginated list of all tasks, optionally filtered by\
+        \ title"
+      operationId: getAllTasks
+      parameters:
+        - name: title
+          in: query
+          description: Title filter for searching tasks
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: "Page number (0-based). Minimum: 0, Maximum: 100000"
+          required: false
+          schema:
+            type: int
+            format: int32
+            default: 0
+            minimum: 0
+            maximum: 100000
+        - name: size
+          in: query
+          description: "Number of elements per page. Minimum: 1, Maximum: 100"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTasksListResponse"
+        "400":
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - Task Management
+      summary: Create a new task
+      description: Creates a new task in the system
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTaskResponse"
+        "400":
+          description: Bad Request - Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict - Data integrity violation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    PostTaskRequest:
+      type: object
+      description: Request body for creating a new task
+      properties:
+        title:
+          type: string
+          description: Title of the task
+          example: Complete the project
+          maxLength: 100
+          minLength: 3
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]+$"
+        description:
+          type: string
+          description: Description of the task
+          example: Finish all the pending items in the backlog
+          maxLength: 500
+          minLength: 0
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]*$"
+        status:
+          type: string
+          description: Current status of the task
+          example: PENDING
+          maxLength: 20
+          minLength: 0
+          pattern: "^[A-Z_]+$"
+        userId:
+          type: integer
+          format: int64
+          description: Identifier of the user who owns the task
+          example: 1
+      required:
+        - status
+        - title
+        - userId
+    PutTaskRequest:
+      type: object
+      description: Request body for updating a task
+      properties:
+        title:
+          type: string
+          description: Title of the task
+          example: Complete the project
+          maxLength: 100
+          minLength: 3
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]+$"
+        description:
+          type: string
+          description: Description of the task
+          example: Finish all the pending items in the backlog
+          maxLength: 500
+          minLength: 0
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]*$"
+        status:
+          type: string
+          description: Current status of the task
+          example: PENDING
+          maxLength: 20
+          minLength: 0
+          pattern: "^[A-Z_]+$"
+        userId:
+          type: integer
+          format: int64
+          description: Identifier of the user who owns the task
+          example: 1
+      required:
+        - status
+        - title
+        - userId
+    TaskResponse:
+      type: object
+      description: Task Domain Model
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the task
+          example: 1
+          readOnly: true
+        title:
+          type: string
+          description: Title of the task
+          example: Complete the project
+          maxLength: 100
+          minLength: 3
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]+$"
+        description:
+          type: string
+          description: Description of the task
+          example: Finish all the pending items in the backlog
+          maxLength: 500
+          minLength: 0
+          pattern: "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.,!?-]*$"
+        status:
+          type: string
+          description: Current status of the task
+          example: PENDING
+          maxLength: 20
+          minLength: 0
+          pattern: "^[A-Z_]+$"
+        userId:
+          type: integer
+          format: int64
+          description: Identifier of the user who owns the task
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2024-01-15T10:30:00
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2024-01-15T15:45:30
+          readOnly: true
+      required:
+        - status
+        - title
+        - userId
+    GetTaskResponse:
+      type: object
+      description: Single task response envelope
+      properties:
+        data:
+          $ref: "#/components/schemas/TaskResponse"
+          description: Task data
+    GetTasksListResponse:
+      type: object
+      description: Paginated list of tasks response envelope
+      properties:
+        data:
+          type: array
+          description: List of tasks
+          items:
+            $ref: "#/components/schemas/TaskResponse"
+        meta:
+          $ref: "#/components/schemas/Pagination"
+          description: Pagination metadata
+    ErrorBody:
+      type: object
+      description: Error Details Body
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: NOT_FOUND
+        message:
+          type: string
+          description: Human-readable error message
+          example: Task not found
+        path:
+          type: string
+          description: URI path where the error occurred
+          example: /api/tasks/1
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        details:
+          type: array
+          description: "List of specific error details (e.g., validation failures)"
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      description: Specific Error Detail
+      properties:
+        field:
+          type: string
+          description: Field name that caused the error
+          example: title
+        code:
+          type: string
+          description: Validation error code
+          example: INVALID_LENGTH
+        message:
+          type: string
+          description: Detailed validation message
+          example: Title must be between 3 and 100 characters
+    ErrorResponse:
+      type: object
+      description: Standard Error Response Envelope
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+          description: Error body containing details
+    Pagination:
+      type: object
+      description: Pagination Metadata
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Current page number (0-based)
+          example: 0
+        size:
+          type: integer
+          format: int32
+          description: Number of elements per page
+          example: 10
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of elements
+          example: 100
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages
+          example: 10

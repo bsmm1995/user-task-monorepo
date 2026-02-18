@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- DO NOT REMOVE. This is a master changelog that runs all other changelogs. -->
+    <property name="byte[].type" dbms="postgresql" value="bytea"/>
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <property name="text.type" dbms="mysql" value="TEXT"/>
+    <property name="text.type" dbms="oracle" value="varchar2(4000)"/>
+    <property name="text.type" dbms="postgresql" value="TEXT"/>
+
+    <include file="db/changelog/changes/01-initial-setup.xml" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>

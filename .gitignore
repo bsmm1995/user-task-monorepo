@@ -1,0 +1,53 @@
+# Java
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+# Ignorar archivos específicos de usuario de IntelliJ que a veces se escapan
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/dictionary.xml
+.idea/shelf/
+.idea/libraries/
+.idea/runConfigurations/
+
+# Spring Boot
+*.log
+**/logs/
+**/application-*.properties
+**/application-*.yml
+!**/src/main/resources/application.yml
+!**/src/test/resources/application.yml
+
+# Docker
+.docker/
+# Ignorar datos locales de DB si se montan fuera del contenedor
+postgres-data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Help files
+HELP.md
