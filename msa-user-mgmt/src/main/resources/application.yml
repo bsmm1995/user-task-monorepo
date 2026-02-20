@@ -17,22 +17,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         default_schema: users_schema
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
-    url: ${spring.datasource.url}
-    default-schema: users_schema
-    liquibase-schema: public
-    database-changelog-table-name: databasechangelog
-    database-changelog-lock-table-name: databasechangeloglock
-    liquibase-tablespace-name: public
-    drop-first: false
-    clear-checksums: false
-    contexts: default
-    parameters:
-      schema: users_schema
   Jackson:
     mapper:
       sort-properties-alphabetically: true
@@ -81,12 +65,5 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.jdbc: INFO
-    org.springframework.boot.autoconfigure.liquibase: DEBUG
-    liquibase: DEBUG
-    liquibase.changelog: DEBUG
-    liquibase.executor: DEBUG
-    liquibase.lockservice: DEBUG
-    liquibase.database: DEBUG
-    liquibase.servicelocator: DEBUG
   pattern:
     console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){faint} %clr([%X{traceId}]){faint} %clr(%logger{36}){cyan}:%clr(%L){faint} - %msg%n%wEx'
