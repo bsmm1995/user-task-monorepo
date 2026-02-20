@@ -7,6 +7,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/task_db
     username: postgres
     password: password
+  liquibase:
+    change-log: classpath:db/changelog-master.yaml
+    liquibase-schema: public
+    enabled: true
   jpa:
     hibernate:
       ddl-auto: none
