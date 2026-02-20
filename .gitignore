@@ -23,6 +23,7 @@ build/
 *.iws
 *.ipr
 out/
+!**/infrastructure/adapter/out/persistence/
 # Ignorar archivos específicos de usuario de IntelliJ que a veces se escapan
 .idea/workspace.xml
 .idea/tasks.xml
