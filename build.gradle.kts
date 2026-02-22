@@ -26,33 +26,3 @@ allprojects {
         mavenCentral()
     }
 }
-
-// Configure task documentation for better discoverability
-subprojects {
-    tasks.withType<Task> {
-        // Add descriptions and groups to all tasks for better organization
-        when {
-            name.contains("openapi", ignoreCase = true) ||
-                    name.contains("openApi", ignoreCase = true) -> {
-                group = "openapi"
-                if (description.isNullOrEmpty()) {
-                    description = "OpenAPI code generation and related tasks"
-                }
-            }
-
-            name.contains("build") && this.name.contains("buildDependents") -> {
-                group = "build"
-                if (description.isNullOrEmpty()) {
-                    description = "Assembles and tests this project"
-                }
-            }
-
-            name.contains("jar") -> {
-                group = "build"
-                if (description.isNullOrEmpty()) {
-                    description = "Assembles a jar archive containing the main classes"
-                }
-            }
-        }
-    }
-}
