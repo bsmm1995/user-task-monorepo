@@ -1,6 +1,7 @@
 package com.example.taskmgmt.infrastructure.adapter.out.client.user;
 
 import com.example.taskmgmt.domain.port.UserExternalServicePort;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.UserServiceCommunicationException;
 import com.example.taskmgmt.infrastructure.adapter.out.client.user.api.UserManagementApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class UserExternalServiceAdapter implements UserExternalServicePort {
             return false;
         } catch (Exception e) {
             log.error("Error communicating with User Service while checking user id: {}", userId, e);
-            throw new RuntimeException("Error validating user existence", e);
+            throw new UserServiceCommunicationException("Error validating user existence", e);
         }
     }
 }
