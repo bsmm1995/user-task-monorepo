@@ -1,12 +1,12 @@
 package com.example.usermgmt.application.usecase;
 
+import com.example.common.exception.UserNotFoundException;
 import com.example.usermgmt.domain.model.User;
 import com.example.usermgmt.domain.port.UserRepositoryPort;
 import com.example.usermgmt.domain.port.UserServicePort;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.GetUsersListResponse;
-import com.example.usermgmt.infrastructure.mapper.UserMapper;
 import com.example.usermgmt.infrastructure.mapper.PaginationMapper;
-import com.example.usermgmt.infrastructure.adapter.in.rest.exception.UserNotFoundException;
+import com.example.usermgmt.infrastructure.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -93,11 +93,11 @@ public class UserServiceUseCase implements UserServicePort {
 
         userRepositoryPort.findById(id)
                 .ifPresentOrElse(
-                    user -> {
-                        userRepositoryPort.deleteById(id);
-                        log.info("User deleted successfully with id: {} - Name: {} {}", id, user.getFirstName(), user.getLastName());
-                    },
-                    () -> log.warn("User not found for deletion with id: {}", id)
+                        user -> {
+                            userRepositoryPort.deleteById(id);
+                            log.info("User deleted successfully with id: {} - Name: {} {}", id, user.getFirstName(), user.getLastName());
+                        },
+                        () -> log.warn("User not found for deletion with id: {}", id)
                 );
     }
 

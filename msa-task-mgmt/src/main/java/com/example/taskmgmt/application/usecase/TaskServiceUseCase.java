@@ -1,12 +1,12 @@
 package com.example.taskmgmt.application.usecase;
 
+import com.example.common.exception.UserNotFoundException;
 import com.example.taskmgmt.domain.model.Task;
 import com.example.taskmgmt.domain.port.TaskRepositoryPort;
 import com.example.taskmgmt.domain.port.TaskServicePort;
 import com.example.taskmgmt.domain.port.UserExternalServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.TaskNotFoundException;
-import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.UserNotFoundException;
 import com.example.taskmgmt.infrastructure.mapper.PaginationMapper;
 import com.example.taskmgmt.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
 
+import com.example.common.exception.UserNotFoundException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,27 +57,32 @@ public class GlobalExceptionHandler {
                     detail.setMessage(violation.getMessage());
                     return detail;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "Constraint violation", request, details);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        Object value = ex.getValue();
+        Class<?> requiredType = ex.getRequiredType();
+
+        String valueTypeName = (value != null) ? value.getClass().getSimpleName() : "null";
+        String requiredTypeName = (requiredType != null) ? requiredType.getSimpleName() : "unknown";
+
         String message = String.format("Method parameter '%s': Failed to convert value of type '%s' to required type '%s'",
-                ex.getName(), (ex.getValue() != null ? ex.getValue().getClass().getSimpleName() : "null"),
-                (ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown"));
+                ex.getName(), valueTypeName, requiredTypeName);
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "TYPE_MISMATCH", message, request, null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.CONFLICT, "DATA_INTEGRITY_ERROR", "Database integrity violation", request, null);
     }
 
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorResponse> handleDataAccessException(DataAccessException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleDataAccessException(HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "DATABASE_ERROR", "A database error occurred", request, null);
     }
 
@@ -87,7 +92,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleGeneralException(HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "An unexpected error occurred", request, null);
     }
 

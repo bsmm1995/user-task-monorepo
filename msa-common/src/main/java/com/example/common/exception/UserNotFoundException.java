@@ -1,4 +1,4 @@
-package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
+package com.example.common.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {
