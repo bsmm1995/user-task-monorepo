@@ -1,6 +1,6 @@
 package com.example.taskmgmt.infrastructure.adapter.out.client.interceptor;
 
-import com.example.taskmgmt.infrastructure.util.LogConstants;
+import com.example.common.util.LogConstants;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

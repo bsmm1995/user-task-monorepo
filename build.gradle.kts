@@ -1,6 +1,6 @@
 // Version Management - Centralized version catalog
 extra["javaVersion"] = "25"
-extra["springBootVersion"] = "4.0.2"
+extra["springBootVersion"] = "4.0.3"
 extra["springDependencyManagementVersion"] = "1.1.7"
 extra["openApiGeneratorVersion"] = "7.20.0"
 extra["springdocOpenApiVersion"] = "3.0.1"

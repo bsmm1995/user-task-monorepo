@@ -1,6 +1,6 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest.interceptor;
 
-import com.example.taskmgmt.infrastructure.util.LogConstants;
+import com.example.common.util.LogConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
