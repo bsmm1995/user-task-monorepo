@@ -43,11 +43,13 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
 
         String userAgent = Optional.ofNullable(request.getHeader("User-Agent")).orElse("-");
 
-        // Put it in MDC so any downstream logs can correlate.
         MDC.put(MDC_TRACE_ID_KEY, traceId);
-
-        // Also echo it back so clients can correlate.
         response.setHeader(TRACE_ID_HEADER, traceId);
+
+        log.info(">>> Incoming Request: HTTP {} {} (traceId={})",
+                method,
+                pathWithQuery,
+                traceId);
 
         try {
             filterChain.doFilter(request, response);
@@ -55,15 +57,14 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
             long durationMs = (System.nanoTime() - startNs) / 1_000_000;
             int status = response.getStatus();
 
-            log.info("HTTP {} {} -> {} ({}ms) remoteAddr={} userAgent=\"{}\" {}={}",
+            log.info("<<< Outgoing Response: HTTP {} {} -> {} ({}ms) (traceId={}) remoteAddr={} userAgent=\"{}\"",
                     method,
                     pathWithQuery,
                     status,
                     durationMs,
+                    traceId,
                     remoteAddr,
-                    userAgent,
-                    TRACE_ID_HEADER,
-                    traceId);
+                    userAgent);
 
             MDC.remove(MDC_TRACE_ID_KEY);
         }

@@ -21,7 +21,7 @@ public class UserExternalServiceAdapter implements UserExternalServicePort {
         try {
             userManagementApi.getUserById(userId);
             return true;
-        } catch (HttpClientErrorException.NotFound e) {
+        } catch (HttpClientErrorException.NotFound _) {
             log.warn("User not found with id: {}", userId);
             return false;
         } catch (Exception e) {

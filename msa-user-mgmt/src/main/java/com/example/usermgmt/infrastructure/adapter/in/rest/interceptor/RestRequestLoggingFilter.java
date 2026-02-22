@@ -46,21 +46,25 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
         MDC.put(MDC_TRACE_ID_KEY, traceId);
         response.setHeader(TRACE_ID_HEADER, traceId);
 
+        log.info(">>> Incoming Request: HTTP {} {} (traceId={})",
+                method,
+                pathWithQuery,
+                traceId);
+
         try {
             filterChain.doFilter(request, response);
         } finally {
             long durationMs = (System.nanoTime() - startNs) / 1_000_000;
             int status = response.getStatus();
 
-            log.info("HTTP {} {} -> {} ({}ms) remoteAddr={} userAgent=\"{}\" {}={}",
+            log.info("<<< Outgoing Response: HTTP {} {} -> {} ({}ms) (traceId={}) remoteAddr={} userAgent=\"{}\"",
                     method,
                     pathWithQuery,
                     status,
                     durationMs,
+                    traceId,
                     remoteAddr,
-                    userAgent,
-                    TRACE_ID_HEADER,
-                    traceId);
+                    userAgent);
 
             MDC.remove(MDC_TRACE_ID_KEY);
         }
