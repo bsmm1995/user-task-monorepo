@@ -22,8 +22,11 @@ build/
 *.iml
 *.iws
 *.ipr
-out/
-!**/infrastructure/adapter/out/persistence/
+# Solo ignorar la carpeta 'out' en la raiz del proyecto si es usada por IntelliJ
+/out/
+# Evitar ignorar paquetes 'out' en la arquitectura hexagonal
+!**/infrastructure/adapter/out/
+!**/infrastructure/adapter/out/**
 # Ignorar archivos específicos de usuario de IntelliJ que a veces se escapan
 .idea/workspace.xml
 .idea/tasks.xml
