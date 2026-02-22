@@ -6,6 +6,7 @@ import com.example.taskmgmt.domain.port.TaskServicePort;
 import com.example.taskmgmt.domain.port.UserExternalServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.TaskNotFoundException;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.UserNotFoundException;
 import com.example.taskmgmt.infrastructure.mapper.PaginationMapper;
 import com.example.taskmgmt.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
@@ -103,7 +104,7 @@ public class TaskServiceUseCase implements TaskServicePort {
     private void validateUserExists(Long userId) {
         log.debug("Validating existence of user with id: {}", userId);
         if (!userExternalServicePort.existsById(userId)) {
-            throw new IllegalArgumentException("Cannot assign task to non-existent user with id: " + userId);
+            throw new UserNotFoundException("Cannot assign task to non-existent user with id: " + userId);
         }
     }
 

@@ -1,8 +1,8 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
 
-import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +22,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(TaskNotFoundException ex, HttpServletRequest request) {
+    @ExceptionHandler({TaskNotFoundException.class, UserNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), request, null);
     }
 
@@ -66,9 +65,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
         String message = String.format("Method parameter '%s': Failed to convert value of type '%s' to required type '%s'",
-                ex.getName(), (ex.getValue() != null ? ex.getValue().getClass().getSimpleName() : "null"), 
+                ex.getName(), (ex.getValue() != null ? ex.getValue().getClass().getSimpleName() : "null"),
                 (ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown"));
-        
+
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "TYPE_MISMATCH", message, request, null);
     }
 
