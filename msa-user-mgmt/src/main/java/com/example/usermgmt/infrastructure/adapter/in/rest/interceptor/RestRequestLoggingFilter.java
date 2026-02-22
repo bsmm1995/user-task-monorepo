@@ -1,5 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest.interceptor;
 
+import com.example.usermgmt.infrastructure.util.LogConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,16 +23,13 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(RestRequestLoggingFilter.class);
 
-    private static final String TRACE_ID_HEADER = "X-Trace-Id";
-    private static final String MDC_TRACE_ID_KEY = "traceId";
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         long startNs = System.nanoTime();
 
-        String traceId = Optional.ofNullable(request.getHeader(TRACE_ID_HEADER))
+        String traceId = Optional.ofNullable(request.getHeader(LogConstants.TRACE_ID_HEADER))
                 .filter(s -> !s.isBlank())
                 .orElseGet(() -> UUID.randomUUID().toString());
 
@@ -43,8 +41,8 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
 
         String userAgent = Optional.ofNullable(request.getHeader("User-Agent")).orElse("-");
 
-        MDC.put(MDC_TRACE_ID_KEY, traceId);
-        response.setHeader(TRACE_ID_HEADER, traceId);
+        MDC.put(LogConstants.MDC_TRACE_ID_KEY, traceId);
+        response.setHeader(LogConstants.TRACE_ID_HEADER, traceId);
 
         log.info(">>> Incoming Request: HTTP {} {} (traceId={})",
                 method,
@@ -66,7 +64,7 @@ public class RestRequestLoggingFilter extends OncePerRequestFilter {
                     remoteAddr,
                     userAgent);
 
-            MDC.remove(MDC_TRACE_ID_KEY);
+            MDC.remove(LogConstants.MDC_TRACE_ID_KEY);
         }
     }
 }
