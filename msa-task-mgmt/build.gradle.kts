@@ -1,6 +1,6 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-// Get versions from parent
+// --- Versions and Plugins ---
 val javaVersion: String by rootProject.extra
 val springdocOpenApiVersion: String by rootProject.extra
 val jakartaValidationVersion: String by rootProject.extra
@@ -15,20 +15,18 @@ plugins {
     id("org.openapi.generator")
 }
 
-// Ensure the build directory is ready
-val buildDir = layout.buildDirectory.get().asFile
-
+// --- Project Configuration ---
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
 }
 
-// Configure Spring Boot to use the correct main class
 springBoot {
     mainClass.set("com.example.taskmgmt.TaskMgmtApplication")
 }
 
+// --- Source Sets and Code Generation ---
 sourceSets {
     main {
         java {
@@ -58,7 +56,6 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "skipDefaultInterface" to "true"
         )
     )
-    // Prevent generation of OpenApiGeneratorApplication class
     globalProperties.set(
         mapOf(
             "apis" to "",
@@ -101,23 +98,36 @@ tasks.withType<JavaCompile> {
     dependsOn(openApiGenerateTask, openApiGenerateUserClient)
 }
 
+// --- Dependencies ---
 dependencies {
+    // Project Dependencies
     implementation(project(":msa-common"))
+
+    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
+
+    // Documentation and Utilities
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
+
+    // Mapping and Data Access
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
+    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+
+    // Code Generation
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+
+    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+// --- Testing Configuration ---
 tasks.withType<Test> {
     group = "verification"
     description = "Runs the unit and integration tests"
