@@ -7,6 +7,7 @@ val jakartaValidationVersion: String by rootProject.extra
 val lombokVersion: String by rootProject.extra
 val postgresqlVersion: String by rootProject.extra
 val mapstructVersion: String by rootProject.extra
+val apachePoiVersion: String by rootProject.extra
 
 plugins {
     id("java")
@@ -110,7 +111,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
     implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("org.apache.poi:poi-ooxml:5.2.5")
+    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

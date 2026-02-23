@@ -10,6 +10,7 @@ extra["liquibaseVersion"] = "5.0.1"
 extra["postgresqlVersion"] = "42.7.3"
 extra["junitVersion"] = "5.10.2"
 extra["mapstructVersion"] = "1.6.3"
+extra["apachePoiVersion"] = "5.5.1"
 
 plugins {
     id("org.springframework.boot") version "4.0.2" apply false

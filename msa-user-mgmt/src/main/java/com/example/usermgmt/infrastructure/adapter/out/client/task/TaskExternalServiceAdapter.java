@@ -29,7 +29,8 @@ public class TaskExternalServiceAdapter implements TaskExternalServicePort {
                                 dto.getTitle(),
                                 dto.getDescription(),
                                 dto.getStatus(),
-                                dto.getUserId()
+                                dto.getUserId(),
+                                dto.getCreatedAt()
                         ))
                         .toList();
             }
