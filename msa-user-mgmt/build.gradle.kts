@@ -99,20 +99,31 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
+    // Project Dependencies
     implementation(project(":msa-common"))
+
+    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
+
+    // Documentation and Utilities
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
+    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
+
+    // Mapping and Data Access
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
+    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+
+    // Code Generation
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
-    implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+
+    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
