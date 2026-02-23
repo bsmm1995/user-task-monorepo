@@ -2,6 +2,7 @@ package com.example.usermgmt.application.usecase;
 
 import com.example.common.exception.UserNotFoundException;
 import com.example.usermgmt.domain.model.User;
+import com.example.usermgmt.domain.port.TaskExternalServicePort;
 import com.example.usermgmt.domain.port.UserRepositoryPort;
 import com.example.usermgmt.domain.port.UserServicePort;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.GetUsersListResponse;
@@ -10,10 +11,19 @@ import com.example.usermgmt.infrastructure.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -21,8 +31,73 @@ import org.springframework.stereotype.Service;
 public class UserServiceUseCase implements UserServicePort {
 
     private final UserRepositoryPort userRepositoryPort;
+    private final TaskExternalServicePort taskExternalServicePort;
     private static final UserMapper userMapper = UserMapper.INSTANCE;
     private static final PaginationMapper paginationMapper = PaginationMapper.INSTANCE;
+
+    @Override
+    public byte[] generateUserReport() {
+        log.info("Starting report generation for all users and their last 25 tasks");
+
+        List<User> allUsers = new ArrayList<>();
+        int page = 0;
+        int size = 100;
+        Page<User> userPage;
+
+        do {
+            userPage = userRepositoryPort.findAll(PageRequest.of(page, size));
+            allUsers.addAll(userPage.getContent());
+            page++;
+        } while (userPage.hasNext());
+
+        log.info("Found {} users for report", allUsers.size());
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Users and Tasks");
+
+            // Header
+            Row headerRow = sheet.createRow(0);
+            String[] columns = {"User ID", "First Name", "Last Name", "Email", "Task ID", "Task Title", "Task Status"};
+            for (int i = 0; i < columns.length; i++) {
+                headerRow.createCell(i).setCellValue(columns[i]);
+            }
+
+            int rowIdx = 1;
+            for (User user : allUsers) {
+                log.debug("Fetching last 25 tasks for user id: {}", user.getId());
+                List<TaskExternalServicePort.TaskExternalDto> tasks = taskExternalServicePort.getTasksByUserId(user.getId(), 0, 25);
+
+                if (tasks.isEmpty()) {
+                    Row row = sheet.createRow(rowIdx++);
+                    row.createCell(0).setCellValue(user.getId());
+                    row.createCell(1).setCellValue(user.getFirstName());
+                    row.createCell(2).setCellValue(user.getLastName());
+                    row.createCell(3).setCellValue(user.getEmail());
+                    row.createCell(4).setCellValue("N/A");
+                    row.createCell(5).setCellValue("No tasks found");
+                    row.createCell(6).setCellValue("N/A");
+                } else {
+                    for (TaskExternalServicePort.TaskExternalDto task : tasks) {
+                        Row row = sheet.createRow(rowIdx++);
+                        row.createCell(0).setCellValue(user.getId());
+                        row.createCell(1).setCellValue(user.getFirstName());
+                        row.createCell(2).setCellValue(user.getLastName());
+                        row.createCell(3).setCellValue(user.getEmail());
+                        row.createCell(4).setCellValue(task.id());
+                        row.createCell(5).setCellValue(task.title());
+                        row.createCell(6).setCellValue(task.status());
+                    }
+                }
+            }
+
+            workbook.write(out);
+            log.info("Report generation completed successfully");
+            return out.toByteArray();
+        } catch (IOException e) {
+            log.error("Error generating Excel report", e);
+            throw new RuntimeException("Could not generate report", e);
+        }
+    }
 
     @Override
     public GetUsersListResponse findAll(String query, Integer page, Integer size) {

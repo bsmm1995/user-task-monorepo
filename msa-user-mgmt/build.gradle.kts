@@ -64,8 +64,37 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     )
 }
 
+val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTaskClient") {
+    group = "openapi"
+    description = "Generate Spring client code from Task Management OpenAPI specification"
+
+    generatorName.set("java")
+    inputSpec.set("$rootDir/msa-task-mgmt/src/main/resources/openapi.yaml".replace("\\", "/"))
+    outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath.replace("\\", "/"))
+    apiPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.api")
+    modelPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.dto")
+    invokerPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.invoker")
+    configOptions.set(
+        mapOf(
+            "dateLibrary" to "java8",
+            "library" to "resttemplate",
+            "useSpringBoot3" to "true",
+            "openApiNullable" to "false",
+            "generateSupportingFiles" to "true",
+            "useJakartaEe" to "true"
+        )
+    )
+    globalProperties.set(
+        mapOf(
+            "apis" to "",
+            "models" to "",
+            "supportingFiles" to ""
+        )
+    )
+}
+
 tasks.withType<JavaCompile> {
-    dependsOn(openApiGenerateUser)
+    dependsOn(openApiGenerateUser, openApiGenerateTaskClient)
 }
 
 dependencies {
@@ -80,6 +109,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

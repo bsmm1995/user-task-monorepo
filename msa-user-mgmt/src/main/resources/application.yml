@@ -71,3 +71,7 @@ logging:
     org.springframework.jdbc: INFO
   pattern:
     console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){faint} %clr([%X{traceId}]){faint} %clr(%logger{36}){cyan}:%clr(%L){faint} - %msg%n%wEx'
+
+services:
+  task-mgmt:
+    base-url: http://localhost:8082

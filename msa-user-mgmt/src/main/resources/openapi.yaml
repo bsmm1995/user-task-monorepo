@@ -17,6 +17,33 @@ tags:
   - name: User Management
     description: Endpoints for managing users
 paths:
+  /api/v1/users/report:
+    get:
+      tags:
+        - User Management
+      summary: Generate users and tasks report
+      description: Generates an Excel report containing all users and their last 25 tasks.
+      operationId: generateUserReport
+      responses:
+        "200":
+          description: Report generated successfully
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /api/v1/users/{id}:
     get:
       tags:
