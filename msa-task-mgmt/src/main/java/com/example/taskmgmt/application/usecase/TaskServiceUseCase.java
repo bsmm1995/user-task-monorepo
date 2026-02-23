@@ -28,22 +28,31 @@ public class TaskServiceUseCase implements TaskServicePort {
     private static final PaginationMapper paginationMapper = PaginationMapper.INSTANCE;
 
     @Override
-    public GetTasksListResponse findAll(String title, Integer page, Integer size) {
-        log.debug("Starting findAll operation with title: '{}', page: {}, size: {}", title, page, size);
+    public GetTasksListResponse findAll(String title, Long userId, Integer page, Integer size) {
+        log.debug("Starting findAll operation with title: '{}', userId: {}, page: {}, size: {}", title, userId, page, size);
 
         var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         log.debug("PageRequest created: page={}, size={}, sort=createdAt:DESC", page, size);
 
         Page<Task> taskPage;
-        if (StringUtils.isNotBlank(title)) {
+        boolean hasTitle = StringUtils.isNotBlank(title);
+        boolean hasUserId = userId != null;
+
+        if (hasTitle && hasUserId) {
+            log.info("Searching tasks with title containing: '{}' and userId: {}", title.trim(), userId);
+            taskPage = taskRepositoryPort.findByTitleAndUserId(title, userId, pageRequest);
+        } else if (hasTitle) {
             log.info("Searching tasks with title containing: '{}'", title.trim());
             taskPage = taskRepositoryPort.findByTitleContaining(title, pageRequest);
-            log.info("Search completed. Found {} tasks out of {} total", taskPage.getNumberOfElements(), taskPage.getTotalElements());
+        } else if (hasUserId) {
+            log.info("Searching tasks for userId: {}", userId);
+            taskPage = taskRepositoryPort.findByUserId(userId, pageRequest);
         } else {
             log.info("Retrieving all tasks");
             taskPage = taskRepositoryPort.findAll(pageRequest);
-            log.info("Retrieved {} tasks out of {} total", taskPage.getNumberOfElements(), taskPage.getTotalElements());
         }
+
+        log.info("Operation completed. Found {} tasks out of {} total", taskPage.getNumberOfElements(), taskPage.getTotalElements());
 
         GetTasksListResponse response = buildPaginatedResponse(taskPage);
         log.debug("Paginated response built successfully with {} tasks", response.getData().size());

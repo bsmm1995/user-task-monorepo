@@ -1,9 +1,11 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest;
 
-import com.example.taskmgmt.domain.model.Task;
 import com.example.taskmgmt.domain.port.TaskServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.api.TaskManagementApi;
-import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.*;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTaskResponse;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.PostTaskRequest;
+import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.PutTaskRequest;
 import com.example.taskmgmt.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,8 @@ public class TaskRestController implements TaskManagementApi {
     private static final TaskMapper taskMapper = TaskMapper.INSTANCE;
 
     @Override
-    public ResponseEntity<GetTasksListResponse> getAllTasks(String title, Integer page, Integer size) {
-        var response = taskServicePort.findAll(title, page, size);
+    public ResponseEntity<GetTasksListResponse> getAllTasks(String title, Long userId, Integer page, Integer size) {
+        var response = taskServicePort.findAll(title, userId, page, size);
         return ResponseEntity.ok(response);
     }
 

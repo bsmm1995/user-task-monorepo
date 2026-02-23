@@ -42,6 +42,13 @@ public class TaskPersistenceAdapter implements TaskRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<Task> findByTitleAndUserId(String title, Long userId, Pageable pageable) {
+        return taskRepository.findByTitleContainingIgnoreCaseAndUserId(title, userId, pageable)
+                .map(taskEntityMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Task> findById(Long id) {
         return taskRepository.findById(id).map(taskEntityMapper::toDomain);
     }

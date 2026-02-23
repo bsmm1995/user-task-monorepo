@@ -4,7 +4,7 @@ import com.example.taskmgmt.domain.model.Task;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
 
 public interface TaskServicePort {
-    GetTasksListResponse findAll(String title, Integer page, Integer size);
+    GetTasksListResponse findAll(String title, Long userId, Integer page, Integer size);
 
     Task findById(Long id);
 

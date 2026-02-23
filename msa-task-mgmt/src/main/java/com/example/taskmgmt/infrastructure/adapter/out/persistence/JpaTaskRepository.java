@@ -11,6 +11,8 @@ public interface JpaTaskRepository extends JpaRepository<TaskEntity, Long> {
     Page<TaskEntity> findByTitleContainingIgnoreCase(@Param("title") String title, Pageable pageable);
 
     Page<TaskEntity> findByUserId(@Param("userId") Long userId, Pageable pageable);
+
+    Page<TaskEntity> findByTitleContainingIgnoreCaseAndUserId(@Param("title") String title, @Param("userId") Long userId, Pageable pageable);
 }
 
 

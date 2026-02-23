@@ -170,6 +170,13 @@ paths:
           required: false
           schema:
             type: string
+        - name: userId
+          in: query
+          description: User ID filter for searching tasks
+          required: false
+          schema:
+            type: integer
+            format: int64
         - name: page
           in: query
           description: "Page number (0-based). Minimum: 0, Maximum: 100000"

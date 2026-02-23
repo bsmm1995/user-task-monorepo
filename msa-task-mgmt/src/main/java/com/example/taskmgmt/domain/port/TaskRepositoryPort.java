@@ -10,6 +10,7 @@ public interface TaskRepositoryPort {
     Page<Task> findAll(Pageable pageable);
     Page<Task> findByTitleContaining(String title, Pageable pageable);
     Page<Task> findByUserId(Long userId, Pageable pageable);
+    Page<Task> findByTitleAndUserId(String title, Long userId, Pageable pageable);
     Optional<Task> findById(Long id);
     Task save(Task task);
     void deleteById(Long id);
