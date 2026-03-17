@@ -40,7 +40,8 @@ public interface {{classname}} {
         summary = "{{{summary}}}",
         description = "{{{notes}}}",
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK")
+            @ApiResponse(responseCode = "200", description = "Operación exitosa"){{#responses}}{{^is2xx}},
+            @ApiResponse(responseCode = "{{{code}}}", description = "{{{message}}}"){{/is2xx}}{{/responses}}
         }
     )
     @RequestMapping(
@@ -50,6 +51,7 @@ public interface {{classname}} {
         consumes = { {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}} }{{/hasConsumes}}
     )
     default ResponseEntity<{{>returnTypes}}> {{operationId}}({{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}}, {{/-last}}{{/allParams}}) {
+        // Implementación por defecto para simplificar la creación de Mocks o Controladores parciales
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
