@@ -18,7 +18,6 @@ public class UserClientConfig {
                 .connectTimeout(Duration.ofSeconds(5));
 
         ApiClient apiClient = new ApiClient(builder, ApiClient.createDefaultObjectMapper(), userMgmtBaseUrl);
-        apiClient.setBasePath(userMgmtBaseUrl);
 
         return new UserManagementApi(apiClient);
     }

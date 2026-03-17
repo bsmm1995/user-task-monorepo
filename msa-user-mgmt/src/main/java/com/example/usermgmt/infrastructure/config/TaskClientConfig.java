@@ -18,7 +18,6 @@ public class TaskClientConfig {
                 .connectTimeout(Duration.ofSeconds(5));
         
         ApiClient apiClient = new ApiClient(builder, ApiClient.createDefaultObjectMapper(), taskMgmtBaseUrl);
-        apiClient.setBasePath(taskMgmtBaseUrl);
 
         return new TaskManagementApi(apiClient);
     }
