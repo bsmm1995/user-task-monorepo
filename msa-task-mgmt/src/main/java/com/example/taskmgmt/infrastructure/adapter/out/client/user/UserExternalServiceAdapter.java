@@ -1,6 +1,6 @@
 package com.example.taskmgmt.infrastructure.adapter.out.client.user;
 
-import com.example.taskmgmt.domain.port.UserExternalServicePort;
+import com.example.taskmgmt.application.port.out.UserExternalServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.UserServiceCommunicationException;
 import com.example.taskmgmt.infrastructure.adapter.out.client.user.api.UserManagementApi;
 import lombok.RequiredArgsConstructor;

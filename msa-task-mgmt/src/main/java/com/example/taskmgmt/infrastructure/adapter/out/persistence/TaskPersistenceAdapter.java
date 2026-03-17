@@ -1,7 +1,7 @@
 package com.example.taskmgmt.infrastructure.adapter.out.persistence;
 
 import com.example.taskmgmt.domain.model.Task;
-import com.example.taskmgmt.domain.port.TaskRepositoryPort;
+import com.example.taskmgmt.application.port.out.TaskRepositoryPort;
 import com.example.taskmgmt.infrastructure.mapper.TaskEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

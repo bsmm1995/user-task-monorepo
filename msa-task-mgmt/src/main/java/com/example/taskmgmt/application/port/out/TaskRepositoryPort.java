@@ -1,4 +1,4 @@
-package com.example.taskmgmt.domain.port;
+package com.example.taskmgmt.application.port.out;
 
 import com.example.taskmgmt.domain.model.Task;
 import org.springframework.data.domain.Page;

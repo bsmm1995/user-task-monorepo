@@ -2,9 +2,9 @@ package com.example.taskmgmt.application.usecase;
 
 import com.example.common.exception.UserNotFoundException;
 import com.example.taskmgmt.application.port.in.TaskServicePort;
+import com.example.taskmgmt.application.port.out.TaskRepositoryPort;
+import com.example.taskmgmt.application.port.out.UserExternalServicePort;
 import com.example.taskmgmt.domain.model.Task;
-import com.example.taskmgmt.domain.port.TaskRepositoryPort;
-import com.example.taskmgmt.domain.port.UserExternalServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.TaskNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

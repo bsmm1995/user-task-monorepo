@@ -1,4 +1,4 @@
-package com.example.usermgmt.domain.port;
+package com.example.usermgmt.application.port.out;
 
 import com.example.usermgmt.domain.model.User;
 import org.springframework.data.domain.Page;

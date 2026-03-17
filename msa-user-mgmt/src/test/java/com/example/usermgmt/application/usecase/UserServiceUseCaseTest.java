@@ -1,9 +1,9 @@
 package com.example.usermgmt.application.usecase;
 
 import com.example.usermgmt.application.port.in.UserServicePort;
+import com.example.usermgmt.application.port.out.TaskExternalServicePort;
+import com.example.usermgmt.application.port.out.UserRepositoryPort;
 import com.example.usermgmt.domain.model.User;
-import com.example.usermgmt.domain.port.TaskExternalServicePort;
-import com.example.usermgmt.domain.port.UserRepositoryPort;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;

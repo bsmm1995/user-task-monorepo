@@ -1,7 +1,7 @@
 package com.example.usermgmt.infrastructure.adapter.out.persistence;
 
 import com.example.usermgmt.domain.model.User;
-import com.example.usermgmt.domain.port.UserRepositoryPort;
+import com.example.usermgmt.application.port.out.UserRepositoryPort;
 import com.example.usermgmt.infrastructure.mapper.UserEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

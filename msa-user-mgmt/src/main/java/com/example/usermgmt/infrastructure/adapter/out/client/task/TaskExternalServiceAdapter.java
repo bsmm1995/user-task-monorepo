@@ -1,6 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.out.client.task;
 
-import com.example.usermgmt.domain.port.TaskExternalServicePort;
+import com.example.usermgmt.application.port.out.TaskExternalServicePort;
 import com.example.usermgmt.infrastructure.adapter.out.client.task.api.TaskManagementApi;
 import com.example.usermgmt.infrastructure.adapter.out.client.task.dto.GetTasksListResponse;
 import lombok.RequiredArgsConstructor;

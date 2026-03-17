@@ -1,4 +1,4 @@
-package com.example.usermgmt.domain.port;
+package com.example.usermgmt.application.port.out;
 
 import java.time.OffsetDateTime;
 import java.util.List;
