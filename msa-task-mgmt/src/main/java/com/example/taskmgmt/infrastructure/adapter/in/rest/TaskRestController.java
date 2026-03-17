@@ -1,11 +1,12 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest;
 
-import com.example.taskmgmt.domain.port.TaskServicePort;
+import com.example.taskmgmt.application.port.in.TaskServicePort;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.api.TaskManagementApi;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTaskResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.PostTaskRequest;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.PutTaskRequest;
+import com.example.taskmgmt.infrastructure.mapper.PaginationMapper;
 import com.example.taskmgmt.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,14 @@ public class TaskRestController implements TaskManagementApi {
 
     private final TaskServicePort taskServicePort;
     private static final TaskMapper taskMapper = TaskMapper.INSTANCE;
+    private static final PaginationMapper paginationMapper = PaginationMapper.INSTANCE;
 
     @Override
     public ResponseEntity<GetTasksListResponse> getAllTasks(String title, Long userId, Integer page, Integer size) {
-        var response = taskServicePort.findAll(title, userId, page, size);
+        var taskPage = taskServicePort.findAll(title, userId, page, size);
+        GetTasksListResponse response = new GetTasksListResponse();
+        response.setData(taskPage.getContent().stream().map(taskMapper::toDto).toList());
+        response.setMeta(paginationMapper.toPaginationDto(taskPage));
         return ResponseEntity.ok(response);
     }
 

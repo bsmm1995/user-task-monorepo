@@ -1,11 +1,12 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest;
 
-import com.example.usermgmt.domain.port.UserServicePort;
+import com.example.usermgmt.application.port.in.UserServicePort;
 import com.example.usermgmt.infrastructure.adapter.in.rest.api.UserManagementApi;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.GetUserResponse;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.GetUsersListResponse;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.PostUserRequest;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.PutUserRequest;
+import com.example.usermgmt.infrastructure.mapper.PaginationMapper;
 import com.example.usermgmt.infrastructure.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -24,6 +25,7 @@ public class UserRestController implements UserManagementApi {
 
     private final UserServicePort userServicePort;
     private static final UserMapper userMapper = UserMapper.INSTANCE;
+    private static final PaginationMapper paginationMapper = PaginationMapper.INSTANCE;
 
     @Override
     public ResponseEntity<Resource> generateUserReport() {
@@ -41,7 +43,10 @@ public class UserRestController implements UserManagementApi {
 
     @Override
     public ResponseEntity<GetUsersListResponse> getAllUsers(String query, Integer page, Integer size) {
-        var response = userServicePort.findAll(query, page, size);
+        var userPage = userServicePort.findAll(query, page, size);
+        GetUsersListResponse response = new GetUsersListResponse();
+        response.setData(userPage.getContent().stream().map(userMapper::toDto).toList());
+        response.setMeta(paginationMapper.toPaginationDto(userPage));
         return ResponseEntity.ok(response);
     }
 

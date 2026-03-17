@@ -1,5 +1,6 @@
 package com.example.usermgmt.application.usecase;
 
+import com.example.usermgmt.application.port.in.UserServicePort;
 import com.example.usermgmt.domain.model.User;
 import com.example.usermgmt.domain.port.TaskExternalServicePort;
 import com.example.usermgmt.domain.port.UserRepositoryPort;

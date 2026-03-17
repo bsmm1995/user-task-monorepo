@@ -1,14 +1,11 @@
 package com.example.taskmgmt.application.usecase;
 
 import com.example.common.exception.UserNotFoundException;
+import com.example.taskmgmt.application.port.in.TaskServicePort;
 import com.example.taskmgmt.domain.model.Task;
 import com.example.taskmgmt.domain.port.TaskRepositoryPort;
-import com.example.taskmgmt.domain.port.TaskServicePort;
 import com.example.taskmgmt.domain.port.UserExternalServicePort;
-import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.GetTasksListResponse;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.TaskNotFoundException;
-import com.example.taskmgmt.infrastructure.mapper.PaginationMapper;
-import com.example.taskmgmt.infrastructure.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,11 +21,9 @@ public class TaskServiceUseCase implements TaskServicePort {
 
     private final TaskRepositoryPort taskRepositoryPort;
     private final UserExternalServicePort userExternalServicePort;
-    private static final TaskMapper taskMapper = TaskMapper.INSTANCE;
-    private static final PaginationMapper paginationMapper = PaginationMapper.INSTANCE;
 
     @Override
-    public GetTasksListResponse findAll(String title, Long userId, Integer page, Integer size) {
+    public Page<Task> findAll(String title, Long userId, Integer page, Integer size) {
         log.debug("Starting findAll operation with title: '{}', userId: {}, page: {}, size: {}", title, userId, page, size);
 
         var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -54,9 +49,7 @@ public class TaskServiceUseCase implements TaskServicePort {
 
         log.info("Operation completed. Found {} tasks out of {} total", taskPage.getNumberOfElements(), taskPage.getTotalElements());
 
-        GetTasksListResponse response = buildPaginatedResponse(taskPage);
-        log.debug("Paginated response built successfully with {} tasks", response.getData().size());
-        return response;
+        return taskPage;
     }
 
     @Override
@@ -131,22 +124,4 @@ public class TaskServiceUseCase implements TaskServicePort {
                 );
     }
 
-    private GetTasksListResponse buildPaginatedResponse(Page<Task> taskPage) {
-        log.debug("Building paginated response. Total elements: {}, Total pages: {}", taskPage.getTotalElements(), taskPage.getTotalPages());
-
-        var response = new GetTasksListResponse();
-        var taskDtos = taskPage.getContent().stream()
-                .map(taskMapper::toDto)
-                .toList();
-
-        response.setData(taskDtos);
-        log.debug("Mapped {} tasks to DTOs", taskDtos.size());
-
-        var pagination = paginationMapper.toPaginationDto(taskPage);
-        response.setMeta(pagination);
-        log.debug("Pagination metadata added: page={}, size={}, totalElements={}, totalPages={}",
-                pagination.getPage(), pagination.getSize(), pagination.getTotalElements(), pagination.getTotalPages());
-
-        return response;
-    }
 }

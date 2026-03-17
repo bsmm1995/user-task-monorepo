@@ -1,5 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest.exception;
 
+import com.example.common.exception.ReportGenerationException;
 import com.example.common.exception.UserNotFoundException;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(ReportGenerationException.class)
+    public ResponseEntity<ErrorResponse> handleReportGenerationException(ReportGenerationException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "REPORT_GENERATION_ERROR", ex.getMessage(), request, null);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

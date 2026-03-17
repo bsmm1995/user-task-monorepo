@@ -1,11 +1,11 @@
-package com.example.usermgmt.domain.port;
+package com.example.usermgmt.application.port.in;
 
-import com.example.usermgmt.infrastructure.adapter.in.rest.dto.GetUsersListResponse;
+import org.springframework.data.domain.Page;
 import com.example.usermgmt.domain.model.User;
 
 public interface UserServicePort {
     byte[] generateUserReport();
-    GetUsersListResponse findAll(String query, Integer page, Integer size);
+    Page<User> findAll(String query, Integer page, Integer size);
     User findById(Long id);
     User save(User user);
     User update(Long id, User user);

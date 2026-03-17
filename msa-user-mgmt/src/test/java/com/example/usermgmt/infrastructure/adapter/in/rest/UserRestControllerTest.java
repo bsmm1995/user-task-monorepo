@@ -1,6 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest;
 
-import com.example.usermgmt.domain.port.UserServicePort;
+import com.example.usermgmt.application.port.in.UserServicePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
