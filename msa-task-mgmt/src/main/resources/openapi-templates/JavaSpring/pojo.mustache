@@ -1,0 +1,48 @@
+/**
+ * {{#description}}{{.}}{{/description}}{{^description}}{{classname}}{{/description}}
+ * Custom POJO template using Lombok
+ */
+@lombok.Data
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
+@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+{{#generatedAnnotation}}
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+{{/generatedAnnotation}}
+public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}} {{#serializableModel}}implements java.io.Serializable{{/serializableModel}} {
+{{#serializableModel}}
+  private static final long serialVersionUID = 1L;
+
+{{/serializableModel}}
+  {{#vars}}
+  /**
+   {{#description}}
+   * {{{.}}}
+   {{/description}}
+   {{#minimum}}
+   * minimum: {{.}}
+   {{/minimum}}
+   {{#maximum}}
+   * maximum: {{.}}
+   {{/maximum}}
+   */
+  @com.fasterxml.jackson.annotation.JsonProperty("{{baseName}}")
+  {{#withXml}}
+  @com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty({{#isXmlAttribute}}isAttribute = true, {{/isXmlAttribute}}{{#xmlNamespace}}namespace = "{{.}}", {{/xmlNamespace}}localName = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
+  {{/withXml}}
+  {{#isEnum}}
+  {{^isContainer}}
+{{>modelInnerEnum}}
+  {{/isContainer}}
+  {{#isContainer}}
+  {{#mostInnerItems}}
+{{>modelInnerEnum}}
+  {{/mostInnerItems}}
+  {{/isContainer}}
+  {{/isEnum}}
+  {{#defaultValue}}@lombok.Builder.Default{{/defaultValue}}
+  private {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
+
+  {{/vars}}
+}

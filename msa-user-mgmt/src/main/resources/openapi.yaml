@@ -308,6 +308,8 @@ components:
     PostUserRequest:
       type: object
       description: Request body for creating a new user
+      x-lombok-data: true
+      x-lombok-builder: true
       properties:
         firstName:
           type: string
@@ -338,6 +340,8 @@ components:
     PutUserRequest:
       type: object
       description: Request body for updating a user
+      x-lombok-data: true
+      x-lombok-builder: true
       properties:
         firstName:
           type: string
@@ -368,6 +372,8 @@ components:
     UserResponse:
       type: object
       description: User Domain Model
+      x-lombok-data: true
+      x-lombok-builder: true
       properties:
         id:
           type: integer

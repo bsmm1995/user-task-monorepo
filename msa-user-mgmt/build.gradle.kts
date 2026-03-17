@@ -44,6 +44,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath.replace("\\", "/"))
     apiPackage.set("com.example.usermgmt.infrastructure.adapter.in.rest.api")
     modelPackage.set("com.example.usermgmt.infrastructure.adapter.in.rest.dto")
+    templateDir.set("$projectDir/src/main/resources/openapi-templates/JavaSpring".replace("\\", "/"))
     configOptions.set(
         mapOf(
             "dateLibrary" to "java8",
@@ -96,6 +97,7 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
 
 tasks.withType<JavaCompile> {
     dependsOn(openApiGenerateUser, openApiGenerateTaskClient)
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 dependencies {
