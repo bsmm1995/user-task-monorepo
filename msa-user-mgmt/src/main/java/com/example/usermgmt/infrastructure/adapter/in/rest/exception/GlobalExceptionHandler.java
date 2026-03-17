@@ -1,5 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest.exception;
 
+import com.example.common.exception.DomainException;
 import com.example.common.exception.ReportGenerationException;
 import com.example.common.exception.UserNotFoundException;
 import com.example.usermgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
@@ -24,8 +25,14 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), request, null);
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getErrorCode(), ex.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ErrorResponse> handleDomainException(DomainException ex, HttpServletRequest request) {
+        HttpStatus status = ex.getErrorCode().contains("NOT_FOUND") ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        return buildErrorResponse(status, ex.getErrorCode(), ex.getMessage(), request, null);
     }
 
     @ExceptionHandler(ReportGenerationException.class)

@@ -1,6 +1,6 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
 
-import com.example.common.exception.UserNotFoundException;
+import com.example.common.exception.DomainException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
@@ -22,9 +22,10 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({TaskNotFoundException.class, UserNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(RuntimeException ex, HttpServletRequest request) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), request, null);
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ErrorResponse> handleDomainException(DomainException ex, HttpServletRequest request) {
+        HttpStatus status = ex.getErrorCode().contains("NOT_FOUND") ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        return buildErrorResponse(status, ex.getErrorCode(), ex.getMessage(), request, null);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

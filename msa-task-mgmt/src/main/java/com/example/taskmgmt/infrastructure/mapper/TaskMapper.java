@@ -7,11 +7,9 @@ import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.TaskResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TaskMapper {
-    TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
 
     TaskResponse toDto(Task task);
 

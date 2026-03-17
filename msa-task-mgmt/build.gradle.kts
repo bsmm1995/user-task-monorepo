@@ -45,16 +45,15 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath.replace("\\", "/"))
     apiPackage.set("com.example.taskmgmt.infrastructure.adapter.in.rest.api")
     modelPackage.set("com.example.taskmgmt.infrastructure.adapter.in.rest.dto")
-    templateDir.set("$projectDir/src/main/resources/openapi-templates/JavaSpring".replace("\\", "/"))
     configOptions.set(
         mapOf(
             "dateLibrary" to "java8",
-            "interfaceOnly" to "true",
+            "delegatePattern" to "true",
+            "interfaceOnly" to "false",
             "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
-            "generateSupportingFiles" to "false",
-            "skipDefaultInterface" to "true"
+            "generateSupportingFiles" to "false"
         )
     )
     globalProperties.set(

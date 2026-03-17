@@ -2,15 +2,13 @@ package com.example.taskmgmt.infrastructure.mapper;
 
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.Pagination;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
 /**
  * Mapper para convertir información de paginación desde Page<T> a DTO Pagination.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PaginationMapper {
-    PaginationMapper INSTANCE = Mappers.getMapper(PaginationMapper.class);
 
     /**
      * Mapea un Page a un DTO Pagination.

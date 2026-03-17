@@ -1,12 +1,14 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest;
 
-import com.example.usermgmt.application.port.in.UserServicePort;
+import com.example.usermgmt.infrastructure.adapter.in.rest.api.UserManagementApiDelegate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -20,12 +22,12 @@ class UserRestControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private UserServicePort userServicePort;
+    private UserManagementApiDelegate userManagementApiDelegate;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        UserRestController userRestController = new UserRestController(userServicePort);
+        UserRestController userRestController = new UserRestController(userManagementApiDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(userRestController).build();
     }
 
@@ -33,7 +35,15 @@ class UserRestControllerTest {
     void generateUserReport_ShouldReturnExcelFileWithTimestamp() throws Exception {
         // Arrange
         byte[] mockReport = new byte[]{1, 2, 3};
-        when(userServicePort.generateUserReport()).thenReturn(mockReport);
+        ByteArrayResource resource = new ByteArrayResource(mockReport);
+        String filename = "users_report_20230101_120000.xlsx";
+
+        when(userManagementApiDelegate.generateUserReport()).thenReturn(
+                ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        .body(resource)
+        );
 
         // Act & Assert
         mockMvc.perform(get("/api/v1/users/report"))

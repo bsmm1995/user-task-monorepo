@@ -17,19 +17,34 @@ Es la capa de orquestación. Aquí es donde vive la "verdad" de qué hace el sis
 
 ### 3. Infraestructura (`infrastructure`)
 Contiene las implementaciones técnicas que hacen que el sistema funcione.
-- **`infrastructure.adapter.in` (Adaptadores de Entrada)**: Controladores REST que implementan las interfaces generadas por OpenAPI y delegan a los puertos de entrada.
-- **`infrastructure.adapter.out` (Adaptadores de Salida)**: Implementaciones de persistencia (JPA), clientes de APIs externas (Feign/RestTemplate), etc.
-- **`infrastructure.mapper`**: Se encarga de transformar datos entre DTOs de API, Entidades de BD y Modelos de Dominio.
+- **`infrastructure.adapter.in.rest`**: Adaptadores REST. Se utiliza el **Patrón Delegate** de OpenAPI Generator para separar la interfaz generada de Spring de la lógica de adaptación.
+    - `*Api`: Interfaz generada automáticamente.
+    - `*ApiDelegate`: Interfaz de delegado generada.
+    - `*DelegateImpl`: Implementación manual del delegado que orquesta la llamada a los puertos de entrada.
+    - `*RestController`: Controlador que inyecta el delegado.
+- **`infrastructure.adapter.out`**: Adaptadores de Salida. Implementaciones de persistencia (JPA), clientes de APIs externas, etc.
+- **`infrastructure.mapper`**: Mapeadores MapStruct configurados como componentes de Spring para transformación entre DTOs, Entidades de BD y Modelos de Dominio.
 
 ---
 
-## 🔌 El Concepto de "Puerto" vs "Servicio"
+## 🛠️ Herramientas y Patrones Clave
 
-En este proyecto, se utiliza el sufijo **`Port`** para diferenciar claramente los contratos de sus implementaciones:
+### 📡 OpenAPI Generator con Patrón Delegate
+Se ha configurado OpenAPI Generator con `delegatePattern = true`. Esto proporciona:
+1.  **Desacoplamiento total**: El código generado por la herramienta no se mezcla con el código manual.
+2.  **Mantenibilidad**: Si la API cambia, solo se regenera la interfaz y el delegado; la lógica en `DelegateImpl` se ajusta según sea necesario.
+3.  **Validaciones Automáticas**: Las validaciones de Jakarta Bean Validation (`@NotNull`, `@Size`, etc.) se generan en los DTOs basados en el contrato YAML, manteniendo el **Dominio Puro**.
 
-- **Puerto (`Port`)**: Es la "intención" o el contrato agnóstico. Es lo que el sistema "expone" o "necesita".
-- **Caso de Uso (`UseCase`)**: Es el "cómo" se resuelve la lógica de negocio.
-- **Adaptador (`Adapter`)**: Es el "cómo" se conecta el sistema con una tecnología específica.
+### 💎 Dominio Puro
+Las entidades de dominio en `domain.model` son POJOs limpios sin anotaciones de:
+-   **Persistencia** (`@Entity`, `@Table`) -> Se usan Entidades de JPA en la infraestructura.
+-   **Validación** (`@NotBlank`, `@Email`) -> Se validan en la capa de entrada (DTOs).
+-   **Documentación** (`@Schema`) -> Definido en el contrato OpenAPI.
+
+### 🚨 Gestión de Excepciones Estandarizada
+Se utiliza una jerarquía de `DomainException` en un módulo común:
+-   Permite lanzar excepciones de negocio desde el núcleo sin dependencias de infraestructura.
+-   Un `GlobalExceptionHandler` centralizado mapea estas excepciones a respuestas HTTP estandarizadas con códigos de error legibles (ej. `USER_NOT_FOUND`).
 
 ### Flujo de una Petición (Request Flow)
 1. El **Controlador REST** (`Adapter In`) recibe la petición HTTP.
