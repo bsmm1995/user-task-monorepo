@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Task Management Service API
   description: "Service for managing tasks and assignments in the User-Task Monorepo\
@@ -182,7 +182,7 @@ paths:
           description: "Page number (0-based). Minimum: 0, Maximum: 100000"
           required: false
           schema:
-            type: int
+            type: integer
             format: int32
             default: 0
             minimum: 0
