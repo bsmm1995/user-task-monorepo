@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Task Management Service API
   description: "Service for managing tasks and assignments in the User-Task Monorepo\

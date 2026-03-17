@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: User Management Service API
   description: Service for managing users in the User-Task Monorepo system. Provides
