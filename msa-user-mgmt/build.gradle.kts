@@ -51,8 +51,8 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "true",
-            "useTags" to "true",
+            "useSpringBoot3" to "false",
+            "useSpringBoot4" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
             "generateSupportingFiles" to "false",
@@ -89,8 +89,8 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
         mapOf(
             "dateLibrary" to "java8",
             "library" to "native",
-            "useSpringBoot3" to "true",
-            "openApiNullable" to "false",
+            "useSpringBoot3" to "false",
+            "useSpringBoot4" to "true",
             "generateSupportingFiles" to "true",
             "useJakartaEe" to "true",
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"

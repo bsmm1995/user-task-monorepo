@@ -1,12 +1,12 @@
 # User-Task Monorepo (Microservicios)
 
-Proyecto demo que implementa una gestión de usuarios y tareas utilizando **Arquitectura Hexagonal**, **Spring Boot 3**, **Gradle (Kotlin DSL)** y **OpenAPI Generator**.
+Proyecto demo que implementa una gestión de usuarios y tareas utilizando **Arquitectura Hexagonal**, **Spring Boot 4**, **Gradle (Kotlin DSL)** y **OpenAPI Generator**.
 
 ## 🚀 Inicio Rápido
 
 ### Requisitos Previos
 - Docker y Docker Compose.
-- Java 17 o superior.
+- Java 25.
 - Gradle (opcional, se incluye `gradlew`).
 
 ### 1. Levantar la Base de Datos
