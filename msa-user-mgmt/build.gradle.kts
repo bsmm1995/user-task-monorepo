@@ -4,6 +4,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 val javaVersion: String by rootProject.extra
 val springdocOpenApiVersion: String by rootProject.extra
 val jakartaValidationVersion: String by rootProject.extra
+val jakartaAnnotationApi: String by rootProject.extra
 val lombokVersion: String by rootProject.extra
 val postgresqlVersion: String by rootProject.extra
 val mapstructVersion: String by rootProject.extra
@@ -44,6 +45,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath.replace("\\", "/"))
     apiPackage.set("com.example.usermgmt.infrastructure.adapter.in.rest.api")
     modelPackage.set("com.example.usermgmt.infrastructure.adapter.in.rest.dto")
+    importMappings.put("Nullable", "jakarta.annotation.Nullable")
     configOptions.set(
         mapOf(
             "dateLibrary" to "java8",
@@ -52,6 +54,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
+            "useJakartaEe" to "true",
             "generateSupportingFiles" to "false",
             "useBeanValidation" to "true",
             "performBeanValidation" to "true",
@@ -70,16 +73,6 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "supportingFiles" to ""
         )
     )
-    doLast {
-        val outputDirValue = outputDir.get()
-        fileTree(outputDirValue).matching { include("**/*.java") }.forEach { file ->
-            val content = file.readText()
-            if (content.contains("org.springframework.lang.Nullable")) {
-                val newContent = content.replace("org.springframework.lang.Nullable", "jakarta.annotation.Nullable")
-                file.writeText(newContent)
-            }
-        }
-    }
 }
 
 val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTaskClient") {
@@ -95,7 +88,7 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
     configOptions.set(
         mapOf(
             "dateLibrary" to "java8",
-            "library" to "resttemplate",
+            "library" to "native",
             "useSpringBoot3" to "true",
             "openApiNullable" to "false",
             "generateSupportingFiles" to "true",
@@ -103,6 +96,20 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
+    doLast {
+        val outputDirValue = outputDir.get()
+        val invokerPath = invokerPackage.get().replace(".", "/")
+        fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
+            val content = file.readText()
+            if (!content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
+                val newContent = content.replace(
+                    "public class ",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class "
+                )
+                file.writeText(newContent)
+            }
+        }
+    }
     globalProperties.set(
         mapOf(
             "apis" to "",
@@ -130,7 +137,7 @@ dependencies {
     // Documentation and Utilities
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
-    implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
+    implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
     // Mapping and Data Access

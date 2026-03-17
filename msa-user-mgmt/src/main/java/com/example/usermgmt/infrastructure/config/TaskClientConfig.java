@@ -5,15 +5,19 @@ import com.example.usermgmt.infrastructure.adapter.out.client.task.invoker.ApiCl
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
 
 @Configuration
 public class TaskClientConfig {
 
     @Bean
     public TaskManagementApi taskManagementApi(@Value("${services.task-mgmt.base-url}") String taskMgmtBaseUrl) {
-        var restTemplate = new RestTemplate();
-        var apiClient = new ApiClient(restTemplate);
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(5));
+        
+        ApiClient apiClient = new ApiClient(builder, ApiClient.createDefaultObjectMapper(), taskMgmtBaseUrl);
         apiClient.setBasePath(taskMgmtBaseUrl);
 
         return new TaskManagementApi(apiClient);
