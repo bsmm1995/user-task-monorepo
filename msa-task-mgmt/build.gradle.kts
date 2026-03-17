@@ -53,7 +53,14 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
-            "generateSupportingFiles" to "false"
+            "generateSupportingFiles" to "false",
+            "useBeanValidation" to "true",
+            "performBeanValidation" to "true",
+            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);@java.lang.SuppressWarnings(\"deprecation\")",
+            "additionalEnumTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
+            "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
+            "generatedAnnotation" to "false",
+            "documentationProvider" to "source"
         )
     )
     globalProperties.set(
@@ -63,6 +70,16 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "supportingFiles" to ""
         )
     )
+    doLast {
+        val outputDirValue = outputDir.get()
+        fileTree(outputDirValue).matching { include("**/*.java") }.forEach { file ->
+            val content = file.readText()
+            if (content.contains("org.springframework.lang.Nullable")) {
+                val newContent = content.replace("org.springframework.lang.Nullable", "jakarta.annotation.Nullable")
+                file.writeText(newContent)
+            }
+        }
+    }
 }
 
 val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUserClient") {
@@ -82,7 +99,8 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
             "useSpringBoot3" to "true",
             "openApiNullable" to "false",
             "generateSupportingFiles" to "true",
-            "useJakartaEe" to "true"
+            "useJakartaEe" to "true",
+            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
     globalProperties.set(
@@ -112,6 +130,7 @@ dependencies {
     // Documentation and Utilities
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
+    implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
 
     // Mapping and Data Access
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
