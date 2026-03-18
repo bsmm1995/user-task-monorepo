@@ -12,6 +12,7 @@ extra["postgresqlVersion"] = "42.7.10"
 extra["junitVersion"] = "6.0.3"
 extra["mapstructVersion"] = "1.6.3"
 extra["apachePoiVersion"] = "5.5.1"
+extra["jacksonDatabindNullableVersion"] = "0.2.6"
 
 plugins {
     id("org.springframework.boot") version "4.0.3" apply false

@@ -8,6 +8,7 @@ val jakartaAnnotationApi: String by rootProject.extra
 val lombokVersion: String by rootProject.extra
 val postgresqlVersion: String by rootProject.extra
 val mapstructVersion: String by rootProject.extra
+val jacksonDatabindNullableVersion: String by rootProject.extra
 
 plugins {
     id("java")
@@ -54,6 +55,7 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "interfaceOnly" to "false",
             "useSpringBoot3" to "false",
             "useSpringBoot4" to "true",
+            "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
             "generateSupportingFiles" to "false",
@@ -64,13 +66,6 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
             "generatedAnnotation" to "false",
             "documentationProvider" to "source"
-        )
-    )
-    globalProperties.set(
-        mapOf(
-            "apis" to "",
-            "models" to "",
-            "supportingFiles" to ""
         )
     )
 }
@@ -110,13 +105,6 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
             }
         }
     }
-    globalProperties.set(
-        mapOf(
-            "apis" to "",
-            "models" to "",
-            "supportingFiles" to ""
-        )
-    )
 }
 
 tasks.withType<JavaCompile> {
@@ -139,6 +127,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
     implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
+    implementation("org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion")
 
     // Mapping and Data Access
     implementation("org.mapstruct:mapstruct:$mapstructVersion")

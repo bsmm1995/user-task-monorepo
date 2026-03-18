@@ -9,6 +9,7 @@ val lombokVersion: String by rootProject.extra
 val postgresqlVersion: String by rootProject.extra
 val mapstructVersion: String by rootProject.extra
 val apachePoiVersion: String by rootProject.extra
+val jacksonDatabindNullableVersion: String by rootProject.extra
 
 plugins {
     id("java")
@@ -39,6 +40,7 @@ sourceSets {
 val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     group = "openapi"
     description = "Generate Spring server code from OpenAPI specification for User Management Service"
+    verbose.set(true)
 
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/resources/openapi.yaml".replace("\\", "/"))
@@ -53,6 +55,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "interfaceOnly" to "false",
             "useSpringBoot3" to "false",
             "useSpringBoot4" to "true",
+            "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
             "generateSupportingFiles" to "false",
@@ -63,14 +66,6 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
             "generatedAnnotation" to "false",
             "documentationProvider" to "source"
-        )
-    )
-    // Prevent generation of OpenApiGeneratorApplication class
-    globalProperties.set(
-        mapOf(
-            "apis" to "",
-            "models" to "",
-            "supportingFiles" to ""
         )
     )
 }
@@ -110,13 +105,6 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             }
         }
     }
-    globalProperties.set(
-        mapOf(
-            "apis" to "",
-            "models" to "",
-            "supportingFiles" to ""
-        )
-    )
 }
 
 tasks.withType<JavaCompile> {
@@ -139,6 +127,7 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
     implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
+    implementation("org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion")
 
     // Mapping and Data Access
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
