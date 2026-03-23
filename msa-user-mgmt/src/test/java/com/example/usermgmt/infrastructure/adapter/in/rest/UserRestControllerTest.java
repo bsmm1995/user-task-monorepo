@@ -1,5 +1,6 @@
 package com.example.usermgmt.infrastructure.adapter.in.rest;
 
+import com.example.usermgmt.infrastructure.adapter.in.rest.api.UserManagementApiController;
 import com.example.usermgmt.infrastructure.adapter.in.rest.api.UserManagementApiDelegate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,8 @@ class UserRestControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        UserRestController userRestController = new UserRestController(userManagementApiDelegate);
-        mockMvc = MockMvcBuilders.standaloneSetup(userRestController).build();
+        UserManagementApiController userManagementApiController = new UserManagementApiController(userManagementApiDelegate);
+        mockMvc = MockMvcBuilders.standaloneSetup(userManagementApiController).build();
     }
 
     @Test

@@ -33,6 +33,10 @@ Desde la raíz, puedes iniciar cada servicio de forma independiente:
   ```bash
   ./gradlew :msa-task-mgmt:bootRun
   ```
+- **Dashboard Aggregator Service (Puerto 8083):**
+  ```bash
+  ./gradlew :msa-dashboard:bootRun
+  ```
 
 ---
 
@@ -41,8 +45,10 @@ Desde la raíz, puedes iniciar cada servicio de forma independiente:
 ### OpenAPI Generator
 Este proyecto adopta el enfoque **API-First**. La definición de la API se realiza en `src/main/resources/openapi.yaml`.
 
-- **Generación de Servidor:** Se generan interfaces `UserManagementApi` y `TaskManagementApi` que los controladores implementan.
-- **Generación de Clientes:** El microservicio de Tareas utiliza OpenAPI para generar un cliente que se comunica con el servicio de Usuarios.
+- **Generación de Servidor:** Se generan interfaces `UserManagementApi`, `TaskManagementApi` y `DashboardApi` que los controladores implementan.
+- **Generación de Clientes:**
+    - `msa-task-mgmt` genera un cliente para consumir `msa-user-mgmt`.
+    - `msa-dashboard` genera clientes para consumir **ambos** servicios (Users y Tasks).
 - **Plantillas Personalizadas:** Se utilizan plantillas `.mustache` en `src/main/resources/openapi-templates` para:
     - Incluir respuestas de error estándar en Swagger UI.
     - Implementaciones `default` para facilitar el testing/mocking.
@@ -51,7 +57,8 @@ Este proyecto adopta el enfoque **API-First**. La definición de la API se reali
 ### Microservicios
 1. **`msa-user-mgmt`**: Gestión de usuarios, correos electrónicos y generación de reportes en Excel (Apache POI).
 2. **`msa-task-mgmt`**: Gestión de tareas asociadas a usuarios, validación de existencia de usuarios vía API externa.
-3. **`msa-common`**: Excepciones, constantes y utilidades compartidas.
+3. **`msa-dashboard`**: Servicio agregador (BFF) que consume Users y Tasks para ofrecer una vista unificada.
+4. **`msa-common`**: Excepciones, constantes y utilidades compartidas.
 
 ---
 

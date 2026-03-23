@@ -1,0 +1,139 @@
+openapi: 3.1.0
+info:
+  title: Dashboard Aggregator Service API
+  description: "BFF (Backend for Frontend) service that aggregates data from User and Task services to provide consolidated views."
+  contact:
+    name: Support Team
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8083
+    description: Local server
+tags:
+  - name: Dashboard
+    description: Aggregated data endpoints
+paths:
+  /api/v1/dashboard/{userId}:
+    get:
+      tags:
+        - Dashboard
+      summary: Get user dashboard
+      description: Retrieves a consolidated view containing user details and their task statistics.
+      operationId: getUserDashboard
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to retrieve the dashboard for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Dashboard retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDashboardResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    DashboardResponse:
+      type: object
+      description: Consolidated dashboard data
+      properties:
+        user:
+          $ref: "#/components/schemas/UserSummary"
+        statistics:
+          $ref: "#/components/schemas/TaskStatistics"
+        recentTasks:
+          type: array
+          description: List of most recent tasks
+          items:
+            $ref: "#/components/schemas/TaskSummary"
+      required:
+        - user
+        - statistics
+    UserSummary:
+      type: object
+      description: Simplified user information
+      properties:
+        id:
+          type: integer
+          format: int64
+        fullName:
+          type: string
+          description: Concatenated first and last name
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - fullName
+        - email
+    TaskStatistics:
+      type: object
+      description: Calculated metrics for tasks
+      properties:
+        totalTasks:
+          type: integer
+          format: int32
+        pendingTasks:
+          type: integer
+          format: int32
+        completedTasks:
+          type: integer
+          format: int32
+        completionRate:
+          type: number
+          format: double
+          description: Percentage of completed tasks (0.0 to 100.0)
+      required:
+        - totalTasks
+        - pendingTasks
+        - completedTasks
+        - completionRate
+    TaskSummary:
+      type: object
+      description: Simplified task information
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        status:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - status
+    GetDashboardResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/DashboardResponse"
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string

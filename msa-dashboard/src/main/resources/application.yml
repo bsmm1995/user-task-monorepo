@@ -1,0 +1,23 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: msa-dashboard
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+# Service URLs for Feign/WebClient/OpenAPI Clients
+services:
+  user-mgmt:
+    base-url: ${SERVICES_USER_MGMT_BASE_URL:http://localhost:8081}
+  task-mgmt:
+    base-url: ${SERVICES_TASK_MGMT_BASE_URL:http://localhost:8082}
+
+springdoc:
+  packages-to-scan: com.example.dashboard.infrastructure.adapter.in.rest.api
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
