@@ -2,6 +2,8 @@ package com.example.taskmgmt.infrastructure.config;
 
 import com.example.taskmgmt.infrastructure.adapter.out.client.user.api.UserManagementApi;
 import com.example.taskmgmt.infrastructure.adapter.out.client.user.invoker.ApiClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,10 @@ public class UserClientConfig {
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5));
 
-        ApiClient apiClient = new ApiClient(builder, ApiClient.createDefaultObjectMapper(), userMgmtBaseUrl);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        ApiClient apiClient = new ApiClient(builder, mapper, userMgmtBaseUrl);
 
         return new UserManagementApi(apiClient);
     }

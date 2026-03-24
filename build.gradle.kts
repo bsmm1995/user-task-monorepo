@@ -1,24 +1,10 @@
-// Version Management - Centralized version catalog
-extra["javaVersion"] = "25"
-extra["springBootVersion"] = "4.0.3"
-extra["springDependencyManagementVersion"] = "1.1.7"
-extra["openApiGeneratorVersion"] = "7.21.0"
-extra["springdocOpenApiVersion"] = "3.0.2"
-extra["jakartaValidationVersion"] = "3.0.2"
-extra["jakartaAnnotationApi"] = "3.0.0"
-extra["lombokVersion"] = "latest.release"
-extra["liquibaseVersion"] = "5.0.2"
-extra["postgresqlVersion"] = "42.7.10"
-extra["junitVersion"] = "6.0.3"
-extra["mapstructVersion"] = "1.6.3"
-extra["apachePoiVersion"] = "5.5.1"
-extra["jacksonDatabindNullableVersion"] = "0.2.6"
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 
 plugins {
-    id("org.springframework.boot") version "4.0.3" apply false
+    id("org.springframework.boot") version "3.4.3" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
-    id("org.openapi.generator") version "7.20.0" apply false
-    id("java")
+    id("org.openapi.generator") version "7.2.0" apply false
+    java
 }
 
 allprojects {
@@ -26,5 +12,33 @@ allprojects {
 
     repositories {
         mavenCentral()
+    }
+}
+
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "io.spring.dependency-management")
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
+    }
+
+    configure<DependencyManagementExtension> {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.3")
+        }
+    }
+
+    dependencies {
+        "compileOnly"("org.projectlombok:lombok")
+        "annotationProcessor"("org.projectlombok:lombok")
+        "testCompileOnly"("org.projectlombok:lombok")
+        "testAnnotationProcessor"("org.projectlombok:lombok")
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }

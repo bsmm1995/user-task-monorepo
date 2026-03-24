@@ -1,29 +1,11 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-// --- Versions and Plugins ---
-val javaVersion: String by rootProject.extra
-val springdocOpenApiVersion: String by rootProject.extra
-val jakartaValidationVersion: String by rootProject.extra
-val jakartaAnnotationApi: String by rootProject.extra
-val lombokVersion: String by rootProject.extra
-val postgresqlVersion: String by rootProject.extra
-val mapstructVersion: String by rootProject.extra
-val jacksonDatabindNullableVersion: String by rootProject.extra
-
 plugins {
-    id("java")
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
     id("org.openapi.generator")
 }
 
 // --- Project Configuration ---
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(javaVersion))
-    }
-}
-
 springBoot {
     mainClass.set("com.example.taskmgmt.TaskMgmtApplication")
 }
@@ -53,8 +35,7 @@ val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
+            "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
@@ -84,8 +65,7 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
         mapOf(
             "dateLibrary" to "java8",
             "library" to "native",
-            "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
+            "useSpringBoot3" to "true",
             "generateSupportingFiles" to "true",
             "useJakartaEe" to "true",
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
@@ -114,38 +94,23 @@ tasks.withType<JavaCompile> {
 
 // --- Dependencies ---
 dependencies {
-    // Project Dependencies
     implementation(project(":msa-common"))
 
-    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    implementation("org.liquibase:liquibase-core")
 
-    // Documentation and Utilities
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
-    implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
-    implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
-    implementation("org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 
-    // Mapping and Data Access
-    implementation("org.mapstruct:mapstruct:$mapstructVersion")
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    implementation("org.postgresql:postgresql:42.7.2")
 
-    // Code Generation
-    compileOnly("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
-    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-// --- Testing Configuration ---
-tasks.withType<Test> {
-    group = "verification"
-    description = "Runs the unit and integration tests"
-    useJUnitPlatform()
 }

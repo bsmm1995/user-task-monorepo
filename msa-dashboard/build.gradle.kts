@@ -1,24 +1,8 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-val javaVersion: String by rootProject.extra
-val springdocOpenApiVersion: String by rootProject.extra
-val jakartaValidationVersion: String by rootProject.extra
-val jakartaAnnotationApi: String by rootProject.extra
-val lombokVersion: String by rootProject.extra
-val jacksonDatabindNullableVersion: String by rootProject.extra
-val mapstructVersion: String by rootProject.extra
-
 plugins {
-    id("java")
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
     id("org.openapi.generator")
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(javaVersion))
-    }
 }
 
 springBoot {
@@ -51,8 +35,7 @@ val openApiGenerateDashboard = tasks.register<GenerateTask>("openApiGenerateDash
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
+            "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
@@ -151,33 +134,20 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
-    // Project Dependencies
     implementation(project(":msa-common"))
 
-    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    // Note: No Database dependency needed for this aggregator service
 
-    // Documentation and Utilities
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
-    implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
-    implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
-    implementation("org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 
-    // Mapping
-    implementation("org.mapstruct:mapstruct:$mapstructVersion")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
     
-    // Code Generation
-    compileOnly("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
-    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

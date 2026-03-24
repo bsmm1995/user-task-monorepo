@@ -1,30 +1,10 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-// Get versions from parent
-val javaVersion: String by rootProject.extra
-val springdocOpenApiVersion: String by rootProject.extra
-val jakartaValidationVersion: String by rootProject.extra
-val jakartaAnnotationApi: String by rootProject.extra
-val lombokVersion: String by rootProject.extra
-val postgresqlVersion: String by rootProject.extra
-val mapstructVersion: String by rootProject.extra
-val apachePoiVersion: String by rootProject.extra
-val jacksonDatabindNullableVersion: String by rootProject.extra
-
 plugins {
-    id("java")
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
     id("org.openapi.generator")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(javaVersion))
-    }
-}
-
-// Configure Spring Boot to use the correct main class
 springBoot {
     mainClass.set("com.example.usermgmt.UserMgmtApplication")
 }
@@ -33,14 +13,15 @@ sourceSets {
     main {
         java {
             srcDir("build/generated/openapi/src/main/java")
+            srcDir("build/generated/task-client/src/main/java")
         }
     }
 }
 
+// 1. Generate Server Code (User API)
 val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     group = "openapi"
     description = "Generate Spring server code from OpenAPI specification for User Management Service"
-    verbose.set(true)
 
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/resources/openapi.yaml".replace("\\", "/"))
@@ -53,8 +34,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
+            "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
@@ -70,13 +50,14 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
     )
 }
 
+// 2. Generate Task Client (Consumes Task Service)
 val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTaskClient") {
     group = "openapi"
-    description = "Generate Spring client code from Task Management OpenAPI specification"
+    description = "Generate Java client code for Task Management Service"
 
     generatorName.set("java")
-    inputSpec.set("$rootDir/msa-task-mgmt/src/main/resources/openapi.yaml".replace("\\", "/"))
-    outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath.replace("\\", "/"))
+    inputSpec.set("$projectDir/../msa-task-mgmt/src/main/resources/openapi.yaml".replace("\\", "/"))
+    outputDir.set(layout.buildDirectory.dir("generated/task-client").get().asFile.absolutePath.replace("\\", "/"))
     apiPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.api")
     modelPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.dto")
     invokerPackage.set("com.example.usermgmt.infrastructure.adapter.out.client.task.invoker")
@@ -91,6 +72,7 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
+    // Fix deprecation warnings in generated code
     doLast {
         val outputDirValue = outputDir.get()
         val invokerPath = invokerPackage.get().replace(".", "/")
@@ -113,39 +95,26 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
-    // Project Dependencies
     implementation(project(":msa-common"))
 
-    // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    implementation("org.liquibase:liquibase-core")
 
-    // Documentation and Utilities
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenApiVersion")
-    implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion")
-    implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApi")
-    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
-    implementation("org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion")
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
 
-    // Mapping and Data Access
-    implementation("org.mapstruct:mapstruct:$mapstructVersion")
-    implementation("org.postgresql:postgresql:$postgresqlVersion")
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 
-    // Code Generation
-    compileOnly("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    implementation("org.postgresql:postgresql:42.7.2")
 
-    // Testing
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.withType<Test> {
-    group = "verification"
-    description = "Runs the unit and integration tests"
-    useJUnitPlatform()
 }

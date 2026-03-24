@@ -4,6 +4,7 @@ import com.example.dashboard.infrastructure.adapter.out.client.task.api.TaskMana
 import com.example.dashboard.infrastructure.adapter.out.client.user.api.UserManagementApi;
 import com.example.dashboard.infrastructure.adapter.out.client.user.invoker.ApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,9 @@ public class ClientConfiguration {
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5));
 
-        ObjectMapper mapper = ApiClient.createDefaultObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        
         ApiClient apiClient = new ApiClient(builder, mapper, userMgmtBaseUrl);
 
         return new UserManagementApi(apiClient);
@@ -30,7 +33,9 @@ public class ClientConfiguration {
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5));
 
-        ObjectMapper mapper = com.example.dashboard.infrastructure.adapter.out.client.task.invoker.ApiClient.createDefaultObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
         com.example.dashboard.infrastructure.adapter.out.client.task.invoker.ApiClient apiClient =
                 new com.example.dashboard.infrastructure.adapter.out.client.task.invoker.ApiClient(
                         builder,
