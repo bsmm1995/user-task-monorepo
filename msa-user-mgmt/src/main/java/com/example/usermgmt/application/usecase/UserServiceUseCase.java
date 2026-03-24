@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -195,6 +196,7 @@ public class UserServiceUseCase implements UserServicePort {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         log.debug("Starting save operation for user: {} {}", user.getFirstName(), user.getLastName());
         User savedUser = userRepositoryPort.save(user);
@@ -203,6 +205,7 @@ public class UserServiceUseCase implements UserServicePort {
     }
 
     @Override
+    @Transactional
     public User update(Long id, User userDetails) {
         log.debug("Starting update operation for user id: {}", id);
 
@@ -223,6 +226,7 @@ public class UserServiceUseCase implements UserServicePort {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         log.debug("Starting delete operation for user id: {}", id);
 

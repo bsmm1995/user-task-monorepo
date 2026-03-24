@@ -7,56 +7,48 @@ Este proyecto implementa los principios de **Arquitectura Hexagonal**, cuyo obje
 ### 1. Dominio (`domain`)
 Contiene los modelos de negocio puros que representan las entidades del sistema. 
 - **`domain.model`**: Entidades agnósticas (ej. `User`, `Task`). 
-- **Independencia**: Esta capa no depende de nada más que de sí misma. No sabe qué es Spring, JPA o HTTP.
+- **Independencia**: Esta capa no depende de nada más que de sí misma. No sabe qué es Spring, JPA o HTTP. Se utilizan tipos de datos estándar de Java (como `Long`, `String`, `OffsetDateTime`).
 
 ### 2. Aplicación (`application`)
 Es la capa de orquestación. Aquí es donde vive la "verdad" de qué hace el sistema.
-- **`application.port.in` (Puertos de Entrada)**: Son las interfaces que el sistema ofrece al mundo exterior (ej. `TaskServicePort`). Representan los **Casos de Uso**.
-- **`application.port.out` (Puertos de Salida)**: Son las interfaces que el sistema necesita para funcionar (ej. `TaskRepositoryPort`, `UserExternalServicePort`).
-- **`application.usecase` (Casos de Uso)**: Son las implementaciones de los puertos de entrada. Orquestan entidades de dominio y puertos de salida.
+- **`application.port.in` (Puertos de Entrada)**: Son las interfaces que el sistema ofrece al mundo exterior (ej. `UserServicePort`). Representan los **Casos de Uso**.
+- **`application.port.out` (Puertos de Salida)**: Son las interfaces que el sistema necesita para funcionar (ej. `UserRepositoryPort`, `TaskExternalServicePort`).
+- **`application.usecase` (Casos de Uso)**: Son las implementaciones de los puertos de entrada. Orquestan entidades de dominio y puertos de salida. Esta capa es responsable de la gestión de transacciones.
 
 ### 3. Infraestructura (`infrastructure`)
 Contiene las implementaciones técnicas que hacen que el sistema funcione.
 - **`infrastructure.adapter.in.rest`**: Adaptadores REST. Se utiliza el **Patrón Delegate** de OpenAPI Generator para separar la interfaz generada de Spring de la lógica de adaptación.
-    - `*Api`: Interfaz generada automáticamente.
-    - `*ApiDelegate`: Interfaz de delegado generada.
-    - `*DelegateImpl`: Implementación manual del delegado que orquesta la llamada a los puertos de entrada.
-    - `*RestController`: Controlador que inyecta el delegado.
-- **`infrastructure.adapter.out`**: Adaptadores de Salida. Implementaciones de persistencia (JPA), clientes de APIs externas, etc.
-- **`infrastructure.mapper`**: Mapeadores MapStruct configurados como componentes de Spring para transformación entre DTOs, Entidades de BD y Modelos de Dominio.
+    - `*Api`: Interfaz generada automáticamente con anotaciones de Spring MVC y Swagger.
+    - `*ApiDelegate`: Interfaz de delegado que permite implementar la lógica sin tocar el controlador generado.
+    - `*DelegateImpl`: Implementación manual del delegado (marcada con `@Service`) que orquesta la llamada a los puertos de entrada y mapea DTOs a Modelos de Dominio.
+- **`infrastructure.adapter.out`**: Adaptadores de Salida. Implementaciones de persistencia (JPA), clientes de APIs externas (generados vía OpenAPI), etc.
+- **`infrastructure.mapper`**: Mapeadores MapStruct configurados como componentes de Spring para la transformación bidireccional entre DTOs, Entidades JPA y Modelos de Dominio.
 
 ---
 
 ## 🛠️ Herramientas y Patrones Clave
 
-### 📡 OpenAPI Generator con Patrón Delegate
-Se ha configurado OpenAPI Generator con `delegatePattern = true`. Esto proporciona:
-1.  **Desacoplamiento total**: El código generado por la herramienta no se mezcla con el código manual.
-2.  **Mantenibilidad**: Si la API cambia, solo se regenera la interfaz y el delegado; la lógica en `DelegateImpl` se ajusta según sea necesario.
-3.  **Validaciones Automáticas**: Las validaciones de Jakarta Bean Validation (`@NotNull`, `@Size`, etc.) se generan en los DTOs basados en el contrato YAML, manteniendo el **Dominio Puro**.
-
-### 💎 Dominio Puro
-Las entidades de dominio en `domain.model` son POJOs limpios sin anotaciones de:
--   **Persistencia** (`@Entity`, `@Table`) -> Se usan Entidades de JPA en la infraestructura.
--   **Validación** (`@NotBlank`, `@Email`) -> Se validan en la capa de entrada (DTOs).
--   **Documentación** (`@Schema`) -> Definido en el contrato OpenAPI.
+### 📡 OpenAPI Generator & Swagger
+Se ha configurado OpenAPI con el `documentationProvider = "springdoc"`. Esto garantiza que:
+1.  **Swagger UI**: Muestre todas las operaciones, modelos y ejemplos de error de forma automática.
+2.  **Sincronización**: El contrato (`openapi.yaml`) es la única fuente de verdad. El código generado incluye validaciones de Bean Validation (`@NotNull`, `@Pattern`, etc.).
 
 ### 🚨 Gestión de Excepciones Estandarizada
-Se utiliza una jerarquía de `DomainException` en un módulo común:
--   Permite lanzar excepciones de negocio desde el núcleo sin dependencias de infraestructura.
--   Un `GlobalExceptionHandler` centralizado mapea estas excepciones a respuestas HTTP estandarizadas con códigos de error legibles (ej. `USER_NOT_FOUND`).
+Se utiliza una jerarquía de `DomainException` en un módulo común (`msa-common`):
+-   **Lanzamiento**: Los casos de uso lanzan excepciones de negocio (ej. `UserNotFoundException`) sin conocer detalles de HTTP.
+-   **Mapeo**: Un `GlobalExceptionHandler` en la capa de infraestructura captura estas excepciones y devuelve un `ErrorResponse` estructurado con `code`, `message`, `path`, `timestamp` y `details`.
 
-### Flujo de una Petición (Request Flow)
-1. El **Controlador REST** (`Adapter In`) recibe la petición HTTP.
-2. El Controlador mapea el DTO de entrada al **Modelo de Dominio**.
-3. El Controlador llama a un **Puerto de Entrada** (`TaskServicePort`).
-4. El **Caso de Uso** implementa ese puerto y orquesta la lógica.
-5. El Caso de Uso usa un **Puerto de Salida** (`TaskRepositoryPort`) para guardar datos.
-6. El **Adaptador de Persistencia** (`Adapter Out`) implementa el puerto de salida usando JPA/Hibernate.
+### 🔄 Flujo de una Petición (Request Flow)
+1.  El **Controlador REST** (generado) recibe la petición HTTP.
+2.  El **DelegateImpl** mapea el DTO de entrada al **Modelo de Dominio**.
+3.  El Delegate llama a un **Puerto de Entrada** (`UseCase`).
+4.  El **Caso de Uso** orquesta la lógica, validando reglas de negocio.
+5.  El Caso de Uso invoca un **Puerto de Salida** (Repositorio o Cliente Externo).
+6.  El **Adaptador de Salida** realiza la operación técnica (DB o API REST) y devuelve el resultado mapeado de nuevo al dominio.
 
 ---
 
 ## ✅ Beneficios de este enfoque
-- **Testeabilidad**: Se puede probar el `UseCase` en total aislamiento usando mocks para los `Ports`.
-- **Intercambiabilidad**: Si decidimos cambiar la base de datos de PostgreSQL a MongoDB, solo cambiamos el `Adapter Out` de persistencia; el código de negocio permanece intacto.
-- **Pureza**: El negocio no se ve "contaminado" por anotaciones de JPA (`@Entity`) o de JSON (`@JsonProperty`).
+- **Testeabilidad**: Los casos de uso se prueban con JUnit y Mockito en total aislamiento de la infraestructura.
+- **Mantenibilidad**: Los cambios en la API externa o la base de datos solo afectan a sus respectivos adaptadores.
+- **Claridad**: La separación de responsabilidades facilita la navegación y evolución del código.

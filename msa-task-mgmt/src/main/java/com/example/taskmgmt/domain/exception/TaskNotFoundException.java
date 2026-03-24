@@ -1,4 +1,4 @@
-package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
+package com.example.taskmgmt.domain.exception;
 
 import com.example.common.exception.ResourceNotFoundException;
 

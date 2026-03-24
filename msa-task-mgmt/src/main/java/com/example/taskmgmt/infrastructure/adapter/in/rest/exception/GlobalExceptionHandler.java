@@ -2,6 +2,7 @@ package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
 
 import com.example.common.exception.DomainException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
+import com.example.taskmgmt.domain.exception.TaskNotFoundException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;

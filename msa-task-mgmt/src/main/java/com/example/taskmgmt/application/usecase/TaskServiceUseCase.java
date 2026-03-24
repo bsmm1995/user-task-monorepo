@@ -4,8 +4,8 @@ import com.example.common.exception.UserNotFoundException;
 import com.example.taskmgmt.application.port.in.TaskServicePort;
 import com.example.taskmgmt.application.port.out.TaskRepositoryPort;
 import com.example.taskmgmt.application.port.out.UserExternalServicePort;
+import com.example.taskmgmt.domain.exception.TaskNotFoundException;
 import com.example.taskmgmt.domain.model.Task;
-import com.example.taskmgmt.infrastructure.adapter.in.rest.exception.TaskNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -65,6 +66,7 @@ public class TaskServiceUseCase implements TaskServicePort {
     }
 
     @Override
+    @Transactional
     public Task save(Task task) {
         log.debug("Starting save operation for task: '{}' - Status: {} - UserID: {}", task.getTitle(), task.getStatus(), task.getUserId());
 
@@ -78,6 +80,7 @@ public class TaskServiceUseCase implements TaskServicePort {
     }
 
     @Override
+    @Transactional
     public Task update(Long id, Task taskDetails) {
         log.debug("Starting update operation for task id: {}", id);
 
@@ -111,6 +114,7 @@ public class TaskServiceUseCase implements TaskServicePort {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         log.debug("Starting delete operation for task id: {}", id);
 
