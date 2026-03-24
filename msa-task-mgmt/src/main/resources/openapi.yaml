@@ -439,7 +439,7 @@ components:
         path:
           type: string
           description: URI path where the error occurred
-          example: /api/tasks/1
+          example: /api/v1/tasks/1
         timestamp:
           type: string
           format: date-time

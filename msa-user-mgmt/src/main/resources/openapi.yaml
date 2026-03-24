@@ -447,7 +447,7 @@ components:
         path:
           type: string
           description: URI path where the error occurred
-          example: /api/users/1
+          example: /api/v1/users/1
         timestamp:
           type: string
           format: date-time

@@ -130,10 +130,51 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/DashboardResponse"
-    ErrorResponse:
+    ErrorBody:
       type: object
+      description: Error Details Body
       properties:
         code:
           type: string
+          description: Machine-readable error code
+          example: NOT_FOUND
         message:
           type: string
+          description: Human-readable error message
+          example: User not found
+        path:
+          type: string
+          description: URI path where the error occurred
+          example: /api/v1/dashboard/1
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        details:
+          type: array
+          description: "List of specific error details (e.g., validation failures)"
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      description: Specific Error Detail
+      properties:
+        field:
+          type: string
+          description: Field name that caused the error
+          example: userId
+        code:
+          type: string
+          description: Validation error code
+          example: INVALID_FORMAT
+        message:
+          type: string
+          description: Detailed validation message
+          example: ID should be valid
+    ErrorResponse:
+      type: object
+      description: Standard Error Response Envelope
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+          description: Error body containing details

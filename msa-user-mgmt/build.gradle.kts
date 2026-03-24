@@ -65,7 +65,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "additionalEnumTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
             "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
             "generatedAnnotation" to "false",
-            "documentationProvider" to "source"
+            "documentationProvider" to "springdoc"
         )
     )
 }
