@@ -1,45 +1,51 @@
 [versions]
 java = "21"
 springBoot = "3.4.3"
-springDependencyManagement = "1.1.7"
-openApiGenerator = "7.2.0"
-springdocOpenApi = "2.8.5"
+dependencyManagement = "1.1.7"
+openapiGenerator = "7.4.0"
+springDoc = "2.5.0"
+mapstruct = "1.6.3"
+lombok = "1.18.36"
+jacksonNullable = "0.2.6"
 jakartaValidation = "3.0.2"
 jakartaAnnotation = "3.0.0"
-lombok = "1.18.36"
-liquibase = "5.0.2"
-postgresql = "42.7.10"
-junit = "6.0.3"
-mapstruct = "1.6.3"
-apachePoi = "5.5.1"
-jacksonDatabindNullable = "0.2.6"
+postgresql = "42.7.3"
+liquibase = "4.27.0"
+poi = "5.2.5"
+junit = "5.10.2"
 
 [libraries]
 # Spring Boot Starters
-spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
-spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
-spring-boot-starter-liquibase = { module = "org.springframework.boot:spring-boot-starter-liquibase", version.ref = "springBoot" }
-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-boot-starter-liquibase = { group = "org.springframework.boot", name = "spring-boot-starter-liquibase" }
 
 # Database
-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+liquibase-core = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase" }
 
-# API & Documentation
-springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenApi" }
-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaValidation" }
-jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
-jackson-databind-nullable = { module = "org.openapitools:jackson-databind-nullable", version.ref = "jacksonDatabindNullable" }
+# Utilities & Tools
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 
-# Utilities
-lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
-mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
-mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
-apache-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "apachePoi" }
+# OpenAPI & Documentation
+springdoc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springDoc" }
+jackson-databind-nullable = { group = "org.openapitools", name = "jackson-databind-nullable", version.ref = "jacksonNullable" }
+jakarta-validation-api = { group = "jakarta.validation", name = "jakarta.validation-api", version.ref = "jakartaValidation" }
+jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotation-api", version.ref = "jakartaAnnotation" }
+
+# Reporting
+apache-poi = { group = "org.apache.poi", name = "poi", version.ref = "poi" }
+apache-poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }
+
+# Testing
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
 [plugins]
-spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
-openapi-generator = { id = "org.openapi.generator", version.ref = "openApiGenerator" }
-java = { id = "org.gradle.java", version = "unspecified" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+dependencyManagement = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
+openapiGenerator = { id = "org.openapi.generator", version.ref = "openapiGenerator" }

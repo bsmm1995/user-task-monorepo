@@ -73,7 +73,6 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
-    // Fix deprecation warnings in generated code
     doLast {
         val outputDirValue = outputDir.get()
         val invokerPath = invokerPackage.get().replace(".", "/")
@@ -136,18 +135,18 @@ tasks.withType<JavaCompile> {
 dependencies {
     implementation(project(":msa-common"))
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.validation)
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-    implementation("jakarta.validation:jakarta.validation-api")
-    implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation(libs.springdoc.ui)
+    implementation(libs.jakarta.validation.api)
+    implementation(libs.jakarta.annotation.api)
+    implementation(libs.jackson.databind.nullable)
 
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    implementation(libs.mapstruct)
     
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    annotationProcessor(libs.mapstruct.processor)
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.spring.boot.starter.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

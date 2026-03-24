@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation(libs.spring.boot.starter)
+    implementation(libs.lombok)
+    implementation(libs.jakarta.validation.api)
 }

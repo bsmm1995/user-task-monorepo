@@ -34,7 +34,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "true",
+            "useSpringBoot3" to "true", // Future-proofing: might become useSpringBoot4
             "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
@@ -66,13 +66,12 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             "dateLibrary" to "java8",
             "library" to "native",
             "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
+            "useSpringBoot4" to "true", // Ensure client is compatible with SB 4
             "generateSupportingFiles" to "true",
             "useJakartaEe" to "true",
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
-    // Fix deprecation warnings in generated code
     doLast {
         val outputDirValue = outputDir.get()
         val invokerPath = invokerPackage.get().replace(".", "/")
@@ -97,24 +96,24 @@ tasks.withType<JavaCompile> {
 dependencies {
     implementation(project(":msa-common"))
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.liquibase:liquibase-core")
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.validation)
+    implementation(libs.liquibase.core)
 
-    implementation("org.apache.poi:poi:5.2.3")
-    implementation("org.apache.poi:poi-ooxml:5.2.3")
+    implementation(libs.apache.poi)
+    implementation(libs.apache.poi.ooxml)
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-    implementation("jakarta.validation:jakarta.validation-api")
-    implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation(libs.springdoc.ui)
+    implementation(libs.jakarta.validation.api)
+    implementation(libs.jakarta.annotation.api)
+    implementation(libs.jackson.databind.nullable)
 
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    implementation("org.postgresql:postgresql:42.7.2")
+    implementation(libs.mapstruct)
+    implementation(libs.postgresql)
 
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    annotationProcessor(libs.mapstruct.processor)
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.spring.boot.starter.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
