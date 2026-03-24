@@ -42,19 +42,22 @@ subprojects {
     }
 
     tasks.withType<JavaCompile> {
-        options.forkOptions.jvmArgs?.addAll(
-            listOf(
-                "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
+        options.isFork = true
+        options.forkOptions.jvmArgs = (options.forkOptions.jvmArgs ?: mutableListOf()).apply {
+            addAll(
+                listOf(
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
+                )
             )
-        )
+        }
     }
 
     tasks.withType<Test> {
