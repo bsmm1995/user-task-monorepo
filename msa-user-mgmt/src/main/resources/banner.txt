@@ -8,7 +8,7 @@ ${AnsiColor.BRIGHT_CYAN}
 
 ${AnsiColor.BRIGHT_YELLOW}========================================================${AnsiColor.DEFAULT}
 ${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_GREEN} App Name 1.0.0${AnsiColor.DEFAULT}
-${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_BLUE} Powered by Spring Boot 4.0.2${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_BLUE} Powered by Spring Boot 4.0.4${AnsiColor.DEFAULT}
 ${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_CYAN} Repository: user-task-monorepo${AnsiColor.DEFAULT}
 ${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_MAGENTA} Version: dev${AnsiColor.DEFAULT}
 ${AnsiColor.BRIGHT_YELLOW}|${AnsiColor.BRIGHT_WHITE} Java: ${java.version}${AnsiColor.DEFAULT}
