@@ -1,8 +1,8 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    id("org.springframework.boot")
-    id("org.openapi.generator")
+    alias(libs.plugins.springBoot)
+    alias(libs.plugins.openapiGenerator)
 }
 
 springBoot {
@@ -34,7 +34,7 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "dateLibrary" to "java8",
             "delegatePattern" to "true",
             "interfaceOnly" to "false",
-            "useSpringBoot3" to "true", // Future-proofing: might become useSpringBoot4
+            "useSpringBoot3" to "true",
             "useTags" to "true",
             "openApiNullable" to "false",
             "useJakartaEe" to "true",
@@ -66,28 +66,13 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             "dateLibrary" to "java8",
             "library" to "native",
             "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true", // Ensure client is compatible with SB 4
-            "generateSupportingFiles" to "true",
             "useJakartaEe" to "true",
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
-    doLast {
-        val outputDirValue = outputDir.get()
-        val invokerPath = invokerPackage.get().replace(".", "/")
-        fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
-            val content = file.readText()
-            if (!content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
-                val newContent = content.replace(
-                    "public class ",
-                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class "
-                )
-                file.writeText(newContent)
-            }
-        }
-    }
 }
 
+// Fix for deprecation warnings in generated code - safer than doLast
 tasks.withType<JavaCompile> {
     dependsOn(openApiGenerateUser, openApiGenerateTaskClient)
     options.compilerArgs.add("-Xlint:deprecation")

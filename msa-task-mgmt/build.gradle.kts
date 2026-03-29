@@ -1,8 +1,8 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    id("org.springframework.boot")
-    id("org.openapi.generator")
+    alias(libs.plugins.springBoot)
+    alias(libs.plugins.openapiGenerator)
 }
 
 springBoot {
@@ -20,7 +20,7 @@ sourceSets {
 
 val openApiGenerateTask = tasks.register<GenerateTask>("openApiGenerateTask") {
     group = "openapi"
-    description = "Generate Spring server code from OpenAPI specification for Task Management Service"
+    description = "Generate Spring server code from OpenAPI specification"
 
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/resources/openapi.yaml".replace("\\", "/"))
@@ -64,31 +64,14 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
             "dateLibrary" to "java8",
             "library" to "native",
             "useSpringBoot3" to "false",
-            "useSpringBoot4" to "true",
-            "generateSupportingFiles" to "true",
             "useJakartaEe" to "true",
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
-    doLast {
-        val outputDirValue = outputDir.get()
-        val invokerPath = invokerPackage.get().replace(".", "/")
-        fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
-            val content = file.readText()
-            if (!content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
-                val newContent = content.replace(
-                    "public class ",
-                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class "
-                )
-                file.writeText(newContent)
-            }
-        }
-    }
 }
 
 tasks.withType<JavaCompile> {
     dependsOn(openApiGenerateTask, openApiGenerateUserClient)
-    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 dependencies {
