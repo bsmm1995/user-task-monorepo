@@ -1,4 +1,5 @@
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     alias(libs.plugins.springBoot) apply false
@@ -28,14 +29,12 @@ subprojects {
         }
     }
 
-    // Configuración centralizada de Spring Boot BOM
     configure<DependencyManagementExtension> {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:${libs.findVersion("springBoot").get()}")
         }
     }
 
-    // Lombok común para todos (evitamos boilerplate en cada build.gradle)
     dependencies {
         "compileOnly"(libs.findLibrary("lombok").get())
         "annotationProcessor"(libs.findLibrary("lombok").get())
@@ -43,9 +42,14 @@ subprojects {
         "testAnnotationProcessor"(libs.findLibrary("lombok").get())
     }
 
+    tasks.withType<BootJar> {
+        layered {
+            enabled.set(true)
+        }
+    }
+
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        // Soporte para Lombok y Java 21+ con modularidad de compilador
         options.forkOptions.jvmArgs = mutableListOf(
             "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
             "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
