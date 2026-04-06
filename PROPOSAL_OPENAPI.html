@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta Técnica: Adopción de OpenAPI Generator</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+        h1 { margin: 0; font-size: 2.5em; }
+        h2 { border-bottom: 2px solid var(--secondary); padding-bottom: 10px; color: var(--primary); margin-top: 40px; }
+        h3 { color: var(--secondary); }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .highlight {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            background-color: var(--secondary);
+            color: white;
+            margin-right: 5px;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Propuesta de Mejora de Productividad</h1>
+    <p>Adopción de API-First con OpenAPI Generator</p>
+</header>
+
+<div class="card">
+    <h2>1. Introducción</h2>
+    <p>Esta propuesta busca transformar nuestra forma de construir APIs RESTful, pasando de un enfoque basado en código (Code-First) a uno basado en el contrato (<b>API-First</b>). Utilizando <b>OpenAPI Generator</b>, podemos automatizar la creación de código repetitivo y garantizar la sincronía total entre microservicios.</p>
+</div>
+
+<div class="card">
+    <h2>2. Flujo de Trabajo Propuesto</h2>
+    <ol>
+        <li><span class="highlight">Generación del Contrato:</span> Dado que actualmente no contamos con SwaggerHub ni con otra plataforma que permita gestionar de forma centralizada el ciclo de vida, versionamiento y gobernanza de contratos OpenAPI, adoptaremos un enfoque asistido por IA para la creación del contrato inicial. A partir de los requerimientos del negocio, generaremos el archivo <code>openapi.yaml</code> como punto de partida formal del diseño. Este contrato servirá como artefacto fuente para la evolución posterior del API y como base para la adopción del modelo Contract‑First dentro de la organización.</li>
+        <li><span class="highlight">Evolución del Contrato:</span> El contrato se convierte en la "Única Fuente de Verdad" (Single Source of Truth). Cualquier cambio se discute y aprueba en el YAML antes de tocar código.</li>
+        <li><span class="highlight">Automatización (Build Time):</span> Durante el proceso de compilación, el generador crea automáticamente:
+            <ul>
+                <li>Interfaces de Controladores (Server Stubs).</li>
+                <li>DTOs (Data Transfer Objects) con validaciones Jakarta/Bean Validation.</li>
+                <li>Clientes de API listos para usar (SDKs internos).</li>
+            </ul>
+        </li>
+        <li><span class="highlight">Ingeniería Inversa (Legacy):</span> Para servicios existentes, extraeremos los contratos desde <code>/v3/api-docs</code> para generar clientes de forma inmediata.</li>
+    </ol>
+</div>
+
+<div class="card">
+    <h2>3. Ventajas Principales</h2>
+    <div class="grid">
+        <div>
+            <h3>🚀 Productividad</h3>
+            <ul>
+                <li><b>Cero DTOs manuales:</b> Se acabó escribir clases repetitivas y sus mappers básicos.</li>
+                <li><b>Contratos inmediatos:</b> Los equipos de Frontend y otros Microservicios pueden empezar a trabajar con el contrato antes de que la lógica esté implementada.</li>
+                <li><b>Reducción de errores:</b> Se eliminan los errores de "typo" en nombres de campos o tipos de datos.</li>
+            </ul>
+        </div>
+        <div>
+            <h3>🛡️ Calidad y Consistencia</h3>
+            <ul>
+                <li><b>Garantía de Firma:</b> Los clientes siempre consumen la versión exacta que el servidor expone.</li>
+                <li><b>Validaciones embebidas:</b> Las restricciones de tamaño, formato y nulidad definidas en el contrato se aplican automáticamente en el código generado.</li>
+                <li><b>Estandarización:</b> Todas nuestras APIs tendrán la misma estructura y calidad de documentación.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>4. Detalles Importantes</h2>
+    <p>Para APIs <b>RESTful</b>, esta herramienta es super ventajosa porque:</p>
+    <ul>
+        <li>Gestiona perfectamente la semántica de HTTP (códigos de estado, verbos, parámetros).</li>
+        <li>Permite usar el <b>Delegate Pattern</b>: el generador crea la interfaz y tú solo implementas la lógica de negocio en una clase separada, manteniendo el código generado limpio y desacoplado.</li>
+        <li>Facilita enormemente las pruebas de integración al tener clientes tipados.</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>5. Prerrequisitos para la Adopción</h2>
+    <ul>
+        <li><span class="badge">Herramientas</span> Gradle o Maven configurado con el plugin <code>org.openapi.generator</code>.</li>
+        <li><span class="badge">Conocimiento</span> Entender la especificación OpenAPI 3.0/3.1.</li>
+        <li><span class="badge">Proceso</span> Definir el YAML como el artefacto que se versiona y lidera el cambio.</li>
+        <li><span class="badge">Librerías</span> Dependencias necesarias en el proyecto (ej. <code>jackson-databind-nullable</code>, <code>swagger-annotations</code>, <code>springdoc-openapi</code>).</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>6. Ejemplo de Configuración (Gradle)</h2>
+    <pre>
+openApiGenerate {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+    outputDir.set("$buildDir/generated/openapi")
+    configOptions.set([
+        delegatePattern: "true",
+        useSpringBoot3: "true",
+        interfaceOnly: "false"
+    ])
+}</pre>
+</div>
+
+<div class="footer">
+    <p>Propuesta generada para el equipo de Arquitectura y Desarrollo.</p>
+</div>
+
+</body>
+</html>
