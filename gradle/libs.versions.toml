@@ -10,9 +10,7 @@ jacksonNullable = "0.2.9"
 jakartaValidation = "3.1.1"
 jakartaAnnotation = "3.0.0"
 postgresql = "42.7.10"
-liquibase = "5.0.2"
 poi = "5.5.1"
-junit = "6.0.3"
 
 [libraries]
 # Spring Boot Starters

@@ -41,9 +41,9 @@ val openApiGenerateUser = tasks.register<GenerateTask>("openApiGenerateUser") {
             "generateSupportingFiles" to "false",
             "useBeanValidation" to "true",
             "performBeanValidation" to "true",
-            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);@java.lang.SuppressWarnings(\"deprecation\")",
-            "additionalEnumTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
-            "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
+            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)",
+            "additionalEnumTypeAnnotations" to "",
+            "additionalApiTypeAnnotations" to "",
             "generatedAnnotation" to "false",
             "documentationProvider" to "springdoc"
         )
@@ -70,6 +70,29 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
             "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
         )
     )
+    doLast {
+        val outputDirValue = outputDir.get()
+        val invokerPath = invokerPackage.get().replace(".", "/")
+        fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
+            val content = file.readText()
+            val newContent = content
+                .replace(
+                    "mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);",
+                    "mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);"
+                )
+                .replace(
+                    "public class ApiClient",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class ApiClient"
+                )
+                .replace(
+                    "public class JSON",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class JSON"
+                )
+            if (newContent != content && !content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
+                file.writeText(newContent)
+            }
+        }
+    }
 }
 
 // Fix for deprecation warnings in generated code - safer than doLast

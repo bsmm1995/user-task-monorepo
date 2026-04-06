@@ -42,9 +42,9 @@ val openApiGenerateDashboard = tasks.register<GenerateTask>("openApiGenerateDash
             "generateSupportingFiles" to "false",
             "useBeanValidation" to "true",
             "performBeanValidation" to "true",
-            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);@java.lang.SuppressWarnings(\"deprecation\")",
-            "additionalEnumTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
-            "additionalApiTypeAnnotations" to "@java.lang.SuppressWarnings(\"deprecation\")",
+            "additionalModelTypeAnnotations" to "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)",
+            "additionalEnumTypeAnnotations" to "",
+            "additionalApiTypeAnnotations" to "",
             "generatedAnnotation" to "false",
             "documentationProvider" to "springdoc"
         )
@@ -78,11 +78,20 @@ val openApiGenerateUserClient = tasks.register<GenerateTask>("openApiGenerateUse
         val invokerPath = invokerPackage.get().replace(".", "/")
         fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
             val content = file.readText()
-            if (!content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
-                val newContent = content.replace(
-                    "public class ",
-                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class "
+            val newContent = content
+                .replace(
+                    "mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);",
+                    "mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);"
                 )
+                .replace(
+                    "public class ApiClient",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class ApiClient"
+                )
+                .replace(
+                    "public class JSON",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class JSON"
+                )
+            if (newContent != content && !content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
                 file.writeText(newContent)
             }
         }
@@ -116,11 +125,20 @@ val openApiGenerateTaskClient = tasks.register<GenerateTask>("openApiGenerateTas
         val invokerPath = invokerPackage.get().replace(".", "/")
         fileTree("$outputDirValue/src/main/java/$invokerPath").matching { include("ApiClient.java", "JSON.java") }.forEach { file ->
             val content = file.readText()
-            if (!content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
-                val newContent = content.replace(
-                    "public class ",
-                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class "
+            val newContent = content
+                .replace(
+                    "mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);",
+                    "mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);"
                 )
+                .replace(
+                    "public class ApiClient",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class ApiClient"
+                )
+                .replace(
+                    "public class JSON",
+                    "@java.lang.SuppressWarnings(\"deprecation\")\npublic class JSON"
+                )
+            if (newContent != content && !content.contains("@java.lang.SuppressWarnings(\"deprecation\")")) {
                 file.writeText(newContent)
             }
         }
