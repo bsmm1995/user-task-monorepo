@@ -25,7 +25,6 @@ spring-boot-starter-liquibase = { group = "org.springframework.boot", name = "sp
 
 # Database
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
-liquibase-core = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase" }
 
 # Utilities & Tools
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }

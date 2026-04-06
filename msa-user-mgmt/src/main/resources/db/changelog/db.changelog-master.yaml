@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: 01-create-schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 02-create-users-table.yaml
+      relativeToChangelogFile: true
