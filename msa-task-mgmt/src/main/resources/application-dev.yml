@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+    org.springframework.boot.autoconfigure: WARN
+    org.springframework.boot: WARN
+    org.springframework.data: WARN
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.hibernate: ERROR
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc: INFO
+
+services:
+  user-mgmt:
+    base-url: http://services.dev.cluster.com

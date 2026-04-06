@@ -1,0 +1,17 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.boot.autoconfigure: INFO
+    org.springframework.boot: INFO
+    org.springframework.data: INFO
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.hibernate: ERROR
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc: INFO
+
+services:
+  user-mgmt:
+    base-url: http://services.prod.cluster.com

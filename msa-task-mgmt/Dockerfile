@@ -1,7 +1,7 @@
 # Stage 1: Extraction
 FROM eclipse-temurin:25-jre-alpine as builder
 WORKDIR application
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=msa-task-mgmt/build/libs/msa-task-mgmt-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 

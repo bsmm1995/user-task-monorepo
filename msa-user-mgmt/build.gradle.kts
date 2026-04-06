@@ -84,7 +84,7 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.validation)
-    implementation(libs.liquibase.core)
+    implementation(libs.spring.boot.starter.liquibase)
 
     implementation(libs.apache.poi)
     implementation(libs.apache.poi.ooxml)
