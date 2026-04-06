@@ -156,7 +156,71 @@
 </div>
 
 <div class="card">
-    <h2>6. Ejemplo de Configuración (Gradle)</h2>
+    <h2>6. Configuración de Capas: Servidor y Clientes</h2>
+    
+    <h3>A. Capa Controller (Spring Server)</h3>
+    <p>Para generar la capa de exposición (Controller), configuramos el generador <code>spring</code>. La clave es el uso de <b>Interfaces y Delegates</b> para separar el código generado de la lógica de negocio.</p>
+    <pre>
+// En build.gradle.kts
+tasks.register&lt;GenerateTask&gt;("openApiGenerateServer") {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+    configOptions.set(mapOf(
+        "delegatePattern" to "true",   // Genera interfaces Delegate
+        "interfaceOnly" to "false",    // Genera Controllers que llaman al Delegate
+        "useSpringBoot3" to "true",    // Soporte para Jakarta EE
+        "useTags" to "true"            // Organiza por tags del YAML
+    ))
+}</pre>
+    <p><b>Cómo implementar:</b> No modificas el Controller. Implementas la interfaz <code>{Resource}ApiDelegate</code> y Spring la inyecta automáticamente.</p>
+
+    <h3>B. Capa Cliente (Java SDK)</h3>
+    <p>Para consumir otros microservicios, usamos el generador <code>java</code> con la librería <code>native</code> (ligera, usa <code>HttpClient</code> de Java 11+).</p>
+    <pre>
+tasks.register&lt;GenerateTask&gt;("openApiGenerateClient") {
+    generatorName.set("java")
+    library.set("native") // Sin dependencias pesadas de frameworks
+    inputSpec.set("$projectDir/../otro-servicio/openapi.yaml")
+    configOptions.set(mapOf(
+        "useJakartaEe" to "true"
+    ))
+}</pre>
+</div>
+
+<div class="card">
+    <h2>7. Uso Práctico y Llamada de Métodos</h2>
+    
+    <div class="grid">
+        <div>
+            <h3>Implementando el Controller</h3>
+            <p>Usando el <code>Delegate Pattern</code>, tu código queda limpio:</p>
+            <pre>
+@Service
+public class UserDelegateImpl implements UserApiDelegate {
+    @Override
+    public ResponseEntity&lt;UserDTO&gt; getUser(Long id) {
+        // Tu lógica de negocio aquí
+        return ResponseEntity.ok(new UserDTO().id(id));
+    }
+}</pre>
+        </div>
+        <div>
+            <h3>Invocando un Cliente</h3>
+            <p>Llamar a otro microservicio es tan simple como usar un objeto tipado:</p>
+            <pre>
+// 1. Configurar el cliente (una vez)
+ApiClient client = new ApiClient().setBasePath("http://tasks-ms");
+TaskApi taskApi = new TaskApi(client);
+
+// 2. Llamar al método (con tipos reales)
+TaskDTO task = taskApi.getTaskById(123L);
+System.out.println(task.getName());</pre>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>8. Ejemplo de Configuración Completa (Gradle)</h2>
     <pre>
 openApiGenerate {
     generatorName.set("spring")
