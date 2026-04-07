@@ -13,7 +13,7 @@ Contiene los modelos de negocio puros que representan las entidades del sistema.
 Es la capa de orquestación. Aquí es donde vive la "verdad" de qué hace el sistema.
 - **`application.port.in` (Puertos de Entrada)**: Son las interfaces que el sistema ofrece al mundo exterior (ej. `UserServicePort`). Representan los **Casos de Uso**.
 - **`application.port.out` (Puertos de Salida)**: Son las interfaces que el sistema necesita para funcionar (ej. `UserRepositoryPort`, `TaskExternalServicePort`).
-- **`application.usecase` (Casos de Uso)**: Son las implementaciones de los puertos de entrada. Orquestan entidades de dominio y puertos de salida. Esta capa es responsable de la gestión de transacciones.
+- **`application.usecase` / `application.service` (Casos de Uso)**: Son las implementaciones de los puertos de entrada. Orquestan entidades de dominio y puertos de salida. Esta capa es responsable de la gestión de transacciones.
 
 ### 3. Infraestructura (`infrastructure`)
 Contiene las implementaciones técnicas que hacen que el sistema funcione.
@@ -32,6 +32,7 @@ Contiene las implementaciones técnicas que hacen que el sistema funcione.
 Se ha configurado OpenAPI con el `documentationProvider = "springdoc"`. Esto garantiza que:
 1.  **Swagger UI**: Muestre todas las operaciones, modelos y ejemplos de error de forma automática.
 2.  **Sincronización**: El contrato (`openapi.yaml`) es la única fuente de verdad. El código generado incluye validaciones de Bean Validation (`@NotNull`, `@Pattern`, etc.).
+3.  **Clientes Tipados**: El consumo entre microservicios se realiza mediante clientes generados automáticamente, eliminando el uso de `RestTemplate` o `WebClient` manual con cadenas de texto.
 
 ### 🚨 Gestión de Excepciones Estandarizada
 Se utiliza una jerarquía de `DomainException` en un módulo común (`msa-common`):
@@ -51,4 +52,5 @@ Se utiliza una jerarquía de `DomainException` en un módulo común (`msa-common
 ## ✅ Beneficios de este enfoque
 - **Testeabilidad**: Los casos de uso se prueban con JUnit y Mockito en total aislamiento de la infraestructura.
 - **Mantenibilidad**: Los cambios en la API externa o la base de datos solo afectan a sus respectivos adaptadores.
-- **Claridad**: La separación de responsabilidades facilita la navegación y evolución del código.
+- **Escalabilidad**: El monorepo permite compartir código común (`msa-common`) mientras los servicios escalan de forma independiente.
+- **Productividad**: El enfoque API-First con generación de código reduce drásticamente el "boilerplate" y los errores manuales.
