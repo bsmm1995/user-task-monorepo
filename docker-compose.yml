@@ -6,6 +6,9 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
     volumes:
       - ./init-db:/docker-entrypoint-initdb.d
     healthcheck:
@@ -14,57 +17,41 @@ services:
       timeout: 3s
       retries: 20
     restart: unless-stopped
-    networks:
-      - app-network
 
   msa-user-mgmt:
     build:
       context: .
       dockerfile: msa-user-mgmt/Dockerfile
     container_name: msa-user-mgmt
-    ports:
-      - "8081:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SERVER_PORT: 8081
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - app-network
+    network_mode: "service:db"
 
   msa-task-mgmt:
     build:
       context: .
       dockerfile: msa-task-mgmt/Dockerfile
     container_name: msa-task-mgmt
-    ports:
-      - "8082:8082"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SERVER_PORT: 8082
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/task_db
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - app-network
+    network_mode: "service:db"
 
   msa-dashboard:
     build:
       context: .
       dockerfile: msa-dashboard/Dockerfile
     container_name: msa-dashboard
-    ports:
-      - "8083:8083"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SERVER_PORT: 8083
+      SPRING_PROFILES_ACTIVE: local
     depends_on:
       - msa-user-mgmt
       - msa-task-mgmt
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    network_mode: "service:db"

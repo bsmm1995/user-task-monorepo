@@ -24,18 +24,27 @@ El proyecto utiliza contratos OpenAPI (`openapi.yaml`) para generar automáticam
 Las clases generadas se ubican en cada módulo bajo `build/generated/openapi` (servidor) y `build/generated/*-client` (clientes).
 
 ### 3. Ejecutar los Microservicios
-Desde la raíz, puedes iniciar cada servicio de forma independiente:
+Desde la raíz, puedes iniciar los servicios de dos formas:
+
+#### Opción A: Docker Compose (Recomendado)
+Esto levantará la base de datos y todos los microservicios, configurados para comunicarse a través de `localhost` (perfil `local` activo).
+```bash
+docker-compose up -d
+```
+
+#### Opción B: Localmente con Gradle
+Si prefieres ejecutar los servicios fuera de Docker, inicia cada uno de forma independiente:
 - **User Management Service (Puerto 8081):**
   ```bash
-  ./gradlew :msa-user-mgmt:bootRun
+  ./gradlew :msa-user-mgmt:bootRun --args='--spring.profiles.active=local'
   ```
 - **Task Management Service (Puerto 8082):**
   ```bash
-  ./gradlew :msa-task-mgmt:bootRun
+  ./gradlew :msa-task-mgmt:bootRun --args='--spring.profiles.active=local'
   ```
 - **Dashboard Aggregator Service (Puerto 8083):**
   ```bash
-  ./gradlew :msa-dashboard:bootRun
+  ./gradlew :msa-dashboard:bootRun --args='--spring.profiles.active=local'
   ```
 
 ### 4. Documentación de la API (Swagger)
