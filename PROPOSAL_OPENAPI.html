@@ -163,11 +163,15 @@
         <div>
             <h3>🚀 Productividad</h3>
             <ul>
-                <li><b>Cero DTOs manuales:</b> Se acabó escribir clases repetitivas y sus mappers básicos.</li>
-                <li><b>Contratos inmediatos:</b> Los equipos de Frontend y otros Microservicios pueden empezar a
+                <li><span class="highlight">Cero DTOs manuales:</span> Se acabó escribir clases repetitivas y sus
+                    mappers básicos.
+                </li>
+                <li><span class="highlight">Contratos inmediatos:</span> Los equipos de Frontend y otros Microservicios
+                    pueden empezar a
                     trabajar con el contrato antes de que la lógica esté implementada.
                 </li>
-                <li><b>Reducción de errores:</b> Se eliminan los errores de "typo" en nombres de campos o tipos de
+                <li><span class="highlight">Reducción de errores:</span> Se eliminan los errores de "typo" en nombres de
+                    campos o tipos de
                     datos.
                 </li>
             </ul>
@@ -175,12 +179,21 @@
         <div>
             <h3>🛡️ Calidad y Consistencia</h3>
             <ul>
-                <li><b>Garantía de Firma:</b> Los clientes siempre consumen la versión exacta que el servidor expone.
+                <li><span class="highlight">Garantía de Firma:</span> Los clientes siempre consumen la versión exacta
+                    que el servidor expone.
                 </li>
-                <li><b>Validaciones embebidas:</b> Las restricciones de tamaño, formato y nulidad definidas en el
+                <li><span class="highlight">Optimización de Cobertura (Sonar):</span> El uso de DTOs generados
+                    automáticamente alivia la carga de mantenimiento y cobertura de pruebas. Dado que estas clases son
+                    código generado por herramientas estándar, se reduce la cantidad de componentes que <b>SonarQube</b>
+                    podría marcar como faltantes de cobertura, permitiendo al equipo enfocarse exclusivamente en probar
+                    la lógica de negocio real.
+                </li>
+                <li><span class="highlight">Validaciones embebidas:</span> Las restricciones de tamaño, formato y
+                    nulidad definidas en el
                     contrato se aplican automáticamente en el código generado.
                 </li>
-                <li><b>Estandarización:</b> Todas nuestras APIs tendrán la misma estructura y calidad de documentación.
+                <li><span class="highlight">Estandarización:</span> Todas nuestras APIs tendrán la misma estructura y
+                    calidad de documentación.
                 </li>
             </ul>
         </div>
@@ -294,6 +307,20 @@ openApiGenerate {
         interfaceOnly: "false"
     ])
 }</pre>
+</div>
+
+<div class="card">
+    <h2>9. Mejoras a Futuro</h2>
+    <ul>
+        <li><span class="highlight">Embebido Automático de Librerías:</span> Integración transparente de librerías
+            desarrolladas internamente dentro del proceso de generación, asegurando que todos los microservicios
+            compartan la misma base lógica y utilitarios transversales sin configuración manual repetitiva.
+        </li>
+        <li><span class="highlight">CLI de Generación de Arquetipos:</span> Creación de una herramienta de línea de
+            comandos (CLI) que permita generar el arquetipo completo del microservicio a partir de la plantilla base,
+            tomando como parámetros de entrada el nombre del repositorio y el archivo OpenAPI inicial.
+        </li>
+    </ul>
 </div>
 
 <div class="footer">
