@@ -38,18 +38,74 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetDashboardResponse"
+              example:
+                data:
+                  user:
+                    id: 1
+                    fullName: Junie AI
+                    email: junie@example.com
+                  statistics:
+                    totalTasks: 5
+                    pendingTasks: 2
+                    completedTasks: 3
+                    completionRate: 60.0
+                  recentTasks:
+                    - id: 101
+                      title: Update Documentation
+                      status: COMPLETED
+                      updatedAt: "2026-04-07T01:00:00Z"
+                    - id: 102
+                      title: Fix Bugs
+                      status: PENDING
+                      updatedAt: "2026-04-07T01:30:00Z"
+        "400":
+          description: Bad Request - Invalid userId format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: "Failed to convert 'userId' to Long"
+                  path: /api/v1/dashboard/abc
+                  timestamp: "2026-04-07T02:00:00.000Z"
         "404":
           description: User not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: USER_NOT_FOUND
+                  message: "User not found with id: 1"
+                  path: /api/v1/dashboard/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
-          description: Internal Server Error
+          description: Internal Server Error - Potential timeout or communication failure with underlying services
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected error occurred while aggregating dashboard data
+                  path: /api/v1/dashboard/1
+                  timestamp: "2026-04-07T02:00:00.000Z"
+        "502":
+          description: Bad Gateway - Upstream service failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_GATEWAY
+                  message: Failed to retrieve user information from msa-user-mgmt
+                  path: /api/v1/dashboard/1
+                  timestamp: "2026-04-07T02:00:00.000Z"
 components:
   schemas:
     DashboardResponse:

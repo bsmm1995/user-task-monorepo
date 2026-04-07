@@ -34,29 +34,45 @@ paths:
             format: int64
       responses:
         "200":
-          description: Task found
+          description: Task found successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTaskResponse"
+              example:
+                data:
+                  id: 1
+                  title: Implement OpenAPI Examples
+                  description: Add realistic examples to all openapi.yaml files
+                  status: IN_PROGRESS
+                  userId: 1
+                  createdAt: "2026-04-07T01:30:00Z"
+                  updatedAt: "2026-04-07T01:35:00Z"
         "400":
           description: Bad Request - Invalid ID format
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: "Failed to convert 'id' to Long"
+                  path: /api/v1/tasks/invalid-id
+                  timestamp: "2026-04-07T01:40:00.000Z"
         "404":
           description: Task not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: TASK_NOT_FOUND
+                  message:
+                    Task not found with id: 1
+                  path: /api/v1/tasks/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
           description: Internal Server Error
           content:
@@ -90,30 +106,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTaskResponse"
+              example:
+                data:
+                  id: 1
+                  title: Implement OpenAPI Examples
+                  description: Updated description
+                  status: COMPLETED
+                  userId: 1
+                  createdAt: "2026-04-07T01:30:00Z"
+                  updatedAt: "2026-04-07T01:45:00Z"
         "400":
           description: Bad Request - Validation failed
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INVALID_INPUT
+                  message: Validation failed for object 'taskRequest'
+                  path: /api/v1/tasks/1
+                  timestamp: "2026-04-07T01:45:00.000Z"
+                  details:
+                    - field: title
+                      code: NOT_BLANK
+                      message: must not be blank
         "404":
           description: Task not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: TASK_NOT_FOUND
+                  message:
+                    Task not found with id: 1
+                  path: /api/v1/tasks/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "409":
-          description: Conflict - Data integrity violation
+          description: Conflict - Data integrity violation (e.g. invalid userId)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: CONFLICT
+                  message: "User ID 999 does not exist"
+                  path: /api/v1/tasks/1
+                  timestamp: "2026-04-07T01:45:00.000Z"
         "500":
           description: Internal Server Error
           content:
@@ -137,18 +179,19 @@ paths:
       responses:
         "204":
           description: Task deleted successfully
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Task not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: TASK_NOT_FOUND
+                  message:
+                    Task not found with id: 1
+                  path: /api/v1/tasks/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
           description: Internal Server Error
           content:
@@ -204,24 +247,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTasksListResponse"
+              example:
+                data:
+                  - id: 1
+                    title: Task 1
+                    description: Desc 1
+                    status: PENDING
+                    userId: 1
+                  - id: 2
+                    title: Task 2
+                    description: Desc 2
+                    status: COMPLETED
+                    userId: 1
+                meta:
+                  page: 0
+                  size: 10
+                  totalElements: 2
+                  totalPages: 1
         "400":
           description: Bad Request - Invalid parameters
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: "Parameter 'userId' must be a numeric value"
+                  path: /api/v1/tasks
+                  timestamp: "2026-04-07T01:50:00.000Z"
         "500":
           description: Internal Server Error
           content:
@@ -229,11 +283,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
         "502":
-          description: Bad Gateway
+          description: Bad Gateway - Error communicating with User Service
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_GATEWAY
+                  message: Error retrieving user information
+                  path: /api/v1/tasks
+                  timestamp: "2026-04-07T01:50:00.000Z"
     post:
       tags:
         - Task Management
@@ -247,30 +307,49 @@ paths:
               $ref: "#/components/schemas/PostTaskRequest"
         required: true
       responses:
-        "200":
+        "201":
           description: Task created successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetTaskResponse"
+              example:
+                data:
+                  id: 3
+                  title: New Task
+                  description: Task description
+                  status: PENDING
+                  userId: 1
+                  createdAt: "2026-04-07T01:55:00Z"
+                  updatedAt: "2026-04-07T01:55:00Z"
         "400":
           description: Bad Request - Validation failed
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INVALID_INPUT
+                  message: Validation failed for object 'taskRequest'
+                  path: /api/v1/tasks
+                  timestamp: "2026-04-07T01:55:00.000Z"
+                  details:
+                    - field: userId
+                      code: NOT_NULL
+                      message: must not be null
         "409":
-          description: Conflict - Data integrity violation
+          description: Conflict - Data integrity violation (e.g. User does not exist)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: CONFLICT
+                  message: Cannot create task. User with ID 999 not found.
+                  path: /api/v1/tasks
+                  timestamp: "2026-04-07T01:55:00.000Z"
         "422":
           description: Unprocessable Entity
           content:

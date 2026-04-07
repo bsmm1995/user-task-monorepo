@@ -32,18 +32,18 @@ paths:
               schema:
                 type: string
                 format: binary
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "500":
-          description: Internal Server Error
+          description: Internal Server Error - Unexpected error during report generation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected error occurred while generating the Excel report
+                  path: /api/v1/users/report
+                  timestamp: "2026-04-07T01:00:00.000Z"
   /api/v1/users/{id}:
     get:
       tags:
@@ -61,29 +61,43 @@ paths:
             format: int64
       responses:
         "200":
-          description: User found
+          description: User found successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUserResponse"
+              example:
+                data:
+                  id: 1
+                  firstName: Junie
+                  lastName: AI
+                  email: junie@example.com
+                  createdAt: "2026-04-06T20:00:00Z"
+                  updatedAt: "2026-04-06T20:30:00Z"
         "400":
           description: Bad Request - Invalid ID format
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: "Method parameter 'id': Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'"
+                  path: /api/v1/users/abc
+                  timestamp: "2026-04-07T01:05:00.000Z"
         "404":
           description: User not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: USER_NOT_FOUND
+                  message: "User not found with id: 1"
+                  path: /api/v1/users/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
           description: Internal Server Error
           content:
@@ -117,30 +131,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUserResponse"
+              example:
+                data:
+                  id: 1
+                  firstName: Junie
+                  lastName: Updated
+                  email: junie.new@example.com
+                  createdAt: "2026-04-06T20:00:00Z"
+                  updatedAt: "2026-04-07T01:15:00Z"
         "400":
           description: Bad Request - Validation failed
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INVALID_INPUT
+                  message: Validation failed for object 'userRequest'
+                  path: /api/v1/users/1
+                  timestamp: "2026-04-07T01:15:00.000Z"
+                  details:
+                    - field: email
+                      code: INVALID_FORMAT
+                      message: Email should be valid
         "404":
           description: User not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: USER_NOT_FOUND
+                  message: "User not found with id: 1"
+                  path: /api/v1/users/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "409":
-          description: Conflict - Data integrity violation
+          description: Conflict - Data integrity violation (e.g. email already in use)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: CONFLICT
+                  message: Email 'existing@example.com' is already registered
+                  path: /api/v1/users/1
+                  timestamp: "2026-04-07T01:15:00.000Z"
         "500":
           description: Internal Server Error
           content:
@@ -164,18 +202,18 @@ paths:
       responses:
         "204":
           description: User deleted successfully
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: User not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: USER_NOT_FOUND
+                  message: "User not found with id: 1"
+                  path: /api/v1/users/1
+                  timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
           description: Internal Server Error
           content:
@@ -224,24 +262,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUsersListResponse"
+              example:
+                data:
+                  - id: 1
+                    firstName: Junie
+                    lastName: AI
+                    email: junie@example.com
+                  - id: 2
+                    firstName: John
+                    lastName: Doe
+                    email: john.doe@example.com
+                meta:
+                  page: 0
+                  size: 10
+                  totalElements: 2
+                  totalPages: 1
         "400":
           description: Bad Request - Invalid parameters
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: "Parameter 'size' must be less than or equal to 100"
+                  path: /api/v1/users
+                  timestamp: "2026-04-07T01:20:00.000Z"
         "500":
           description: Internal Server Error
           content:
@@ -267,30 +314,51 @@ paths:
               $ref: "#/components/schemas/PostUserRequest"
         required: true
       responses:
-        "200":
+        "201":
           description: User created successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUserResponse"
+              example:
+                data:
+                  id: 3
+                  firstName: New
+                  lastName: User
+                  email: new.user@example.com
+                  createdAt: "2026-04-07T01:25:00Z"
+                  updatedAt: "2026-04-07T01:25:00Z"
         "400":
           description: Bad Request - Validation failed
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: INVALID_INPUT
+                  message: Validation failed for object 'userRequest'
+                  path: /api/v1/users
+                  timestamp: "2026-04-07T01:25:00.000Z"
+                  details:
+                    - field: firstName
+                      code: NOT_BLANK
+                      message: must not be blank
+                    - field: email
+                      code: INVALID_FORMAT
+                      message: Email should be valid
         "409":
           description: Conflict - User already exists or data integrity violation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: CONFLICT
+                  message: User with email 'junie@example.com' already exists
+                  path: /api/v1/users
+                  timestamp: "2026-04-07T01:25:00.000Z"
         "422":
           description: Unprocessable Entity
           content:

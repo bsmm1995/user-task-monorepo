@@ -1,8 +1,8 @@
 package com.example.taskmgmt.infrastructure.adapter.in.rest.exception;
 
 import com.example.common.exception.DomainException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorBody;
-import com.example.taskmgmt.domain.exception.TaskNotFoundException;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorDetail;
 import com.example.taskmgmt.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomainException(DomainException ex, HttpServletRequest request) {
-        HttpStatus status = ex.getErrorCode().contains("NOT_FOUND") ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        HttpStatus status = (ex instanceof ResourceNotFoundException || ex.getErrorCode().contains("NOT_FOUND"))
+                ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
         return buildErrorResponse(status, ex.getErrorCode(), ex.getMessage(), request, null);
     }
 
