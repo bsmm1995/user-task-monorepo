@@ -65,12 +65,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/ErrorResponseNotFound"
               example:
                 error:
                   code: TASK_NOT_FOUND
-                  message:
-                    Task not found with id: 1
+                  message: "Task not found with id: 1"
                   path: /api/v1/tasks/1
                   timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
@@ -136,12 +135,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/ErrorResponseNotFound"
               example:
                 error:
                   code: TASK_NOT_FOUND
-                  message:
-                    Task not found with id: 1
+                  message: "Task not found with id: 1"
                   path: /api/v1/tasks/1
                   timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "409":
@@ -184,12 +182,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/ErrorResponseNotFound"
               example:
                 error:
                   code: TASK_NOT_FOUND
-                  message:
-                    Task not found with id: 1
+                  message: "Task not found with id: 1"
                   path: /api/v1/tasks/1
                   timestamp: "2026-04-06T21:37:00.6109828-05:00"
         "500":
@@ -503,6 +500,26 @@ components:
         meta:
           $ref: "#/components/schemas/Pagination"
           description: Pagination metadata
+    ErrorBodyNotFound:
+      type: object
+      description: Error Details Body (No details for Not Found)
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: NOT_FOUND
+        message:
+          type: string
+          description: Human-readable error message
+          example: Task not found
+        path:
+          type: string
+          description: URI path where the error occurred
+          example: /api/v1/tasks/1
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
     ErrorBody:
       type: object
       description: Error Details Body
@@ -526,6 +543,7 @@ components:
         details:
           type: array
           description: "List of specific error details (e.g., validation failures)"
+          nullable: true
           items:
             $ref: "#/components/schemas/ErrorDetail"
     ErrorDetail:
@@ -544,6 +562,13 @@ components:
           type: string
           description: Detailed validation message
           example: Title must be between 3 and 100 characters
+    ErrorResponseNotFound:
+      type: object
+      description: Standard Error Response Envelope (No details)
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBodyNotFound"
+          description: Error body (without details)
     ErrorResponse:
       type: object
       description: Standard Error Response Envelope
