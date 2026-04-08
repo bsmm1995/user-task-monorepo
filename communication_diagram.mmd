@@ -1,0 +1,35 @@
+graph TD
+    %% Clientes Externos
+    Client((Cliente / UI)) -->|Consume| Dashboard
+
+    subgraph "Capa de Agregación (BFF)"
+        Dashboard[msa-dashboard]
+    end
+
+    subgraph "Servicios de Dominio"
+        UserMgmt[msa-user-mgmt]
+        TaskMgmt[msa-task-mgmt]
+    end
+
+    subgraph "Persistencia"
+        UserDB[(PostgreSQL User DB)]
+        TaskDB[(PostgreSQL Task DB)]
+    end
+
+    %% Comunicaciones msa-dashboard
+    Dashboard -->|GET /api/v1/users| UserMgmt
+    Dashboard -->|GET /api/v1/tasks| TaskMgmt
+
+    %% Comunicaciones inter-servicio
+    UserMgmt <-->|REST API| TaskMgmt
+
+    %% Persistencia
+    UserMgmt --- UserDB
+    TaskMgmt --- TaskDB
+
+    %% Estilo
+    style Dashboard fill:#f9f,stroke:#333,stroke-width:2px
+    style UserMgmt fill:#bbf,stroke:#333,stroke-width:2px
+    style TaskMgmt fill:#bbf,stroke:#333,stroke-width:2px
+    style UserDB fill:#dfd,stroke:#333
+    style TaskDB fill:#dfd,stroke:#333

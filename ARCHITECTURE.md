@@ -2,6 +2,12 @@
 
 Este proyecto implementa los principios de **Arquitectura Hexagonal**, cuyo objetivo es aislar la lógica de negocio (el núcleo) de los detalles de infraestructura (servidores HTTP, bases de datos, APIs externas).
 
+## Visión General de la Arquitectura
+
+A continuación, se presenta un diagrama que ilustra la comunicación entre los diferentes microservicios del proyecto:
+
+![Diagrama de Comunicación de Microservicios](communication_diagram.png)
+
 ## 🏢 Estructura de Capas
 
 ### 1. Dominio (`domain`)
