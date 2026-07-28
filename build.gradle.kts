@@ -15,6 +15,11 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    // Enable dependency locking for all configurations
+    dependencyLocking {
+        lockAllConfigurations()
+    }
 }
 
 subprojects {
