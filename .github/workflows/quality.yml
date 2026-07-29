@@ -1,0 +1,38 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Check code formatting
+      run: ./gradlew spotlessCheck || echo "⚠️ Code formatting issues found"
+
+    - name: Run linting
+      run: ./gradlew checkstyleMain || echo "⚠️ Code style issues found"
+
+    - name: Check for forbidden patterns
+      run: |
+        if grep -r "System\.out\.println\|System\.err\.println" src/main/java --include="*.java"; then
+          echo "❌ Found forbidden System.out/err.println statements"
+          exit 1
+        fi
+
+    - name: Build all modules
+      run: ./gradlew assemble
+

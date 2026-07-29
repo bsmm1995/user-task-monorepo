@@ -1,0 +1,54 @@
+name: Feature Request
+description: Sugiere una nueva feature
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Nos encantaría escuchar tu idea! Describe la feature que necesitas.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción de la feature
+      description: Describe qué quieres agregar
+      placeholder: "Necesito un endpoint para exportar usuarios a Excel porque..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Caso de uso
+      description: Por qué es útil esta feature?
+      placeholder: "Un admin necesita generar reportes de usuarios activos mensualmente"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Solución propuesta
+      description: Cómo imaginas que debería funcionar?
+      placeholder: |
+        - Nuevo endpoint: GET /users/export?format=excel
+        - Retorna archivo Excel descargable
+        - Contiene columnas: id, name, email, createdAt
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Otras formas de resolver esto
+      placeholder: "CSV export, JSON API, etc."
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Información adicional
+      description: Context, links, mockups, etc.
+      placeholder: "Ver issue #123 para contexto relacionado"
+

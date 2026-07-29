@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Check for Gradle dependency updates weekly
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bsmin"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Check for GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bsmin"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+

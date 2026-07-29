@@ -77,3 +77,68 @@ Adoptamos el enfoque **API-First**. La definición de la API se realiza en `src/
 El proyecto sigue los principios de **Arquitectura Hexagonal**. Para más detalles sobre las capas y el flujo de datos, consulta [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 Para una propuesta detallada sobre por qué y cómo adoptamos OpenAPI, consulta el documento [PROPOSAL_OPENAPI.html](./PROPOSAL_OPENAPI.html).
+
+---
+
+## 🤖 Copilot Configuration
+
+This project is configured for **GitHub Copilot** out of the box.
+
+**Copilot will auto-load**: `.github/copilot-instructions.md`
+
+This file contains all patterns, code templates, and rules for this Hexagonal Architecture + OpenAPI project.
+
+**Start here**: 
+- **Full guide**: [AGENTS.md](./AGENTS.md) – Architecture, workflows, best practices
+- **Setup**: [DEVELOPMENT.md](./DEVELOPMENT.md) – Local environment
+- **Deep dive**: [ARCHITECTURE.md](./ARCHITECTURE.md) – Technical details
+
+## 🤝 Contributing
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) for:
+- Development workflow
+- Architecture patterns to follow
+- How to run tests locally
+- Commit message conventions
+- PR submission guidelines
+
+## 📋 Git Configuration
+
+- `.gitignore` – Files to exclude from git
+- `.gitattributes` – Line endings and file type settings
+- `.github/PULL_REQUEST_TEMPLATE.md` – PR template
+- `.github/ISSUE_TEMPLATE/` – Bug and feature templates
+
+## 🔄 CI/CD
+
+GitHub Actions workflows (`.github/workflows/`):
+- **build.yml** – Build, test, generate OpenAPI code
+- **quality.yml** – Code quality checks
+- **Dependabot** – Automatic dependency updates
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+---
+
+## 📖 Documentación
+
+| Documento | Propósito |
+|-----------|-----------|
+| **[AGENTS.md](./AGENTS.md)** | Guía principal para arquitectura hexagonal, patrones y desarrollo |
+| **[DEVELOPMENT.md](./DEVELOPMENT.md)** | Setup del entorno de desarrollo local |
+| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Detalles profundos sobre capas hexagonales y flujo de datos |
+| **[PROPOSAL_OPENAPI.html](./PROPOSAL_OPENAPI.html)** | Justificación y diseño del enfoque API-First |
+
+
+---
+
+## 🔗 Referencias Externas
+
+- **Arquitectura Hexagonal**: https://alistair.cockburn.us/hexagonal-architecture/
+- **OpenAPI Spec**: https://spec.openapis.org/
+- **Spring Boot**: https://spring.io/projects/spring-boot
+- **MapStruct**: https://mapstruct.org/
+- **Gradle**: https://gradle.org/
+

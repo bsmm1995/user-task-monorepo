@@ -1,0 +1,39 @@
+# Git attributes for line endings and language detection
+
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Java files
+*.java text eol=lf
+*.gradle text eol=lf
+*.gradle.kts text eol=lf
+*.properties text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+gradlew text eol=lf
+
+# Windows batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# YAML files
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Markdown files
+*.md text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# Binary files
+*.jar binary
+*.war binary
+*.zip binary
+*.class binary
+
+# Docker
+Dockerfile text eol=lf
+
