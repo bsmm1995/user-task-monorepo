@@ -2,7 +2,7 @@
 java = "25"
 springBoot = "4.1.0"
 dependencyManagement = "1.1.7"
-openapiGenerator = "7.20.0"
+openapiGenerator = "7.24.0"
 springDoc = "3.0.2"
 mapstruct = "1.6.3"
 lombok = "1.18.44"
