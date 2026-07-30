@@ -73,6 +73,17 @@ Adoptamos el enfoque **API-First**. La definición de la API se realiza en `src/
 
 ---
 
+## 🤖 IA & Desarrollo Guiado por Especificaciones (SPECT)
+
+Este proyecto está optimizado para el desarrollo asistido por IA (Junie, Copilot, etc.) siguiendo la metodología **SPECT**:
+
+- **[SPECT.md](./SPECT.md)**: Guía maestra del flujo **S**pecification, **P**lan, **E**xecution, **C**ontext, **T**est.
+- **[specs/](./specs/)**: Directorio que contiene las especificaciones de funcionalidades (usa `FEATURE_TEMPLATE.md` para nuevas tareas).
+- **[SCRATCHPAD.md](./SCRATCHPAD.md)**: Espacio dinámico para coordinar la ejecución actual con la IA.
+- **[AGENTS.md](./AGENTS.md)**: Guía detallada de patrones y arquitectura para agentes de IA.
+
+---
+
 ## 🏗️ Arquitectura
 El proyecto sigue los principios de **Arquitectura Hexagonal**. Para más detalles sobre las capas y el flujo de datos, consulta [ARCHITECTURE.md](./ARCHITECTURE.md).
 
@@ -126,8 +137,8 @@ This project is licensed under the [MIT License](./LICENSE).
 
 | Documento | Propósito |
 |-----------|-----------|
+| **[SPECT.md](./SPECT.md)** | **Guía del flujo de desarrollo guiado por IA y especificaciones** |
 | **[AGENTS.md](./AGENTS.md)** | Guía principal para arquitectura hexagonal, patrones y desarrollo |
-| **[DEVELOPMENT.md](./DEVELOPMENT.md)** | Setup del entorno de desarrollo local |
 | **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Detalles profundos sobre capas hexagonales y flujo de datos |
 | **[PROPOSAL_OPENAPI.html](./PROPOSAL_OPENAPI.html)** | Justificación y diseño del enfoque API-First |
 

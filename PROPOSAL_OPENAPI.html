@@ -119,40 +119,37 @@
 <body>
 
 <header>
-    <h1>Propuesta de Mejora de Productividad</h1>
-    <p>Adopción de API-First con OpenAPI Generator</p>
+    <h1>Estándar Técnico: API-First</h1>
+    <p>Adopción y Guía de Uso de OpenAPI Generator</p>
 </header>
 
 <div class="card">
     <h2>1. Introducción</h2>
-    <p>Esta propuesta busca transformar nuestra forma de construir APIs RESTful, pasando de un enfoque basado en código
-        (Code-First) a uno basado en el contrato (<b>API-First</b>). Utilizando <b>OpenAPI Generator</b>, podemos
-        automatizar la creación de código repetitivo y garantizar la sincronía total entre microservicios.</p>
+    <p>Este documento establece el estándar para la construcción de APIs RESTful en nuestro ecosistema de microservicios, 
+        consolidando el enfoque <b>API-First</b>. Mediante el uso de <b>OpenAPI Generator</b>, automatizamos la creación 
+        de contratos, DTOs y clientes, garantizando una arquitectura desacoplada y sincronizada bajo los principios de 
+        la <b>Arquitectura Hexagonal</b>.</p>
 </div>
 
 <div class="card">
-    <h2>2. Flujo de Trabajo Propuesto</h2>
+    <h2>2. Flujo de Trabajo (Metodología SPECT)</h2>
     <ol>
-        <li><span class="highlight">Generación del Contrato:</span> Dado que actualmente no contamos con SwaggerHub ni
-            con otra plataforma que permita gestionar de forma centralizada el ciclo de vida, versionamiento y
-            gobernanza de contratos OpenAPI, adoptaremos un enfoque asistido por IA para la creación del contrato
-            inicial. A partir de los requerimientos del negocio, generaremos el archivo <code>openapi.yaml</code> como
-            punto de partida formal del diseño. Este contrato servirá como artefacto fuente para la evolución posterior
-            del API y como base para la adopción del modelo Contract‑First dentro de la organización.
+        <li><span class="highlight">Diseño del Contrato (S - Specification):</span> Siguiendo el flujo <b>SPECT</b>, 
+            definimos primero el archivo <code>openapi.yaml</code>. Este contrato es la "Única Fuente de Verdad" 
+            (SSoT) y debe ser aprobado antes de iniciar cualquier implementación.
         </li>
-        <li><span class="highlight">Evolución del Contrato:</span> El contrato se convierte en la "Única Fuente de
-            Verdad" (Single Source of Truth). Cualquier cambio se discute y aprueba en el YAML antes de tocar código.
-        </li>
-        <li><span class="highlight">Automatización (Build Time):</span> Durante el proceso de compilación, el generador
-            crea automáticamente:
+        <li><span class="highlight">Generación de Código:</span> Durante la compilación (Gradle), el generador crea:
             <ul>
-                <li>Interfaces de Controladores (Server Stubs).</li>
-                <li>DTOs (Data Transfer Objects) con validaciones Jakarta/Bean Validation.</li>
-                <li>Clientes de API listos para usar (SDKs internos).</li>
+                <li>Interfaces de Controladores (Server Stubs) con el <b>Delegate Pattern</b>.</li>
+                <li>DTOs con validaciones Jakarta/Bean Validation (<code>@NotNull</code>, <code>@Size</code>, etc.).</li>
+                <li>Clientes de API (SDKs internos) para comunicación entre microservicios.</li>
             </ul>
         </li>
-        <li><span class="highlight">Ingeniería Inversa (Legacy):</span> Para servicios existentes, extraeremos los
-            contratos desde <code>/v3/api-docs</code> para generar clientes de forma inmediata.
+        <li><span class="highlight">Implementación del Delegado:</span> Se implementa el <code>*DelegateImpl</code> 
+            donde se realiza el mapeo entre DTOs y Modelos de Dominio usando <b>MapStruct</b>.
+        </li>
+        <li><span class="highlight">Orquestación:</span> El delegado llama al puerto de entrada (UseCase) correspondiente 
+            en la capa de aplicación.
         </li>
     </ol>
 </div>
@@ -231,100 +228,120 @@
     <h2>6. Configuración de Capas: Servidor y Clientes</h2>
 
     <h3>A. Capa Controller (Spring Server)</h3>
-    <p>Para generar la capa de exposición (Controller), configuramos el generador <code>spring</code>. La clave es el
-        uso de <b>Interfaces y Delegates</b> para separar el código generado de la lógica de negocio.</p>
+    <p>Utilizamos el generador <code>spring</code> con el perfil de <b>Spring Boot 3/4</b> y soporte para <b>Jakarta EE</b>. 
+        Configuramos el <code>delegatePattern</code> para mantener el código generado separado de la lógica.</p>
     <pre>
 // En build.gradle.kts
 tasks.register&lt;GenerateTask&gt;("openApiGenerateServer") {
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
     configOptions.set(mapOf(
-        "delegatePattern" to "true",   // Genera interfaces Delegate
-        "interfaceOnly" to "false",    // Genera Controllers que llaman al Delegate
-        "useSpringBoot4" to "true",    // Soporte para Jakarta EE y Spring Boot 4
-        "useTags" to "true"            // Organiza por tags del YAML
+        "delegatePattern" to "true",
+        "useSpringBoot3" to "true",    // Compatible con Spring Boot 3 y 4 (Jakarta EE)
+        "useJakartaEe" to "true",
+        "documentationProvider" to "springdoc",
+        "useBeanValidation" to "true",
+        "interfaceOnly" to "false"
     ))
 }</pre>
-    <p><b>Cómo implementar:</b> No modificas el Controller. Implementas la interfaz <code>{Resource}ApiDelegate</code> y
-        Spring la inyecta automáticamente.</p>
 
     <h3>B. Capa Cliente (Java SDK)</h3>
-    <p>Para consumir otros microservicios, usamos el generador <code>java</code> con la librería <code>native</code>
-        (ligera, usa <code>HttpClient</code> de Java 11+).</p>
+    <p>Para la comunicación interna entre microservicios, generamos clientes ligeros usando la librería <code>native</code> 
+        (Java 11+ HttpClient) para evitar sobrecarga de dependencias.</p>
     <pre>
 tasks.register&lt;GenerateTask&gt;("openApiGenerateClient") {
     generatorName.set("java")
-    library.set("native") // Sin dependencias pesadas de frameworks
-    inputSpec.set("$projectDir/../otro-servicio/openapi.yaml")
+    library.set("native")
+    inputSpec.set("$projectDir/../msa-task-mgmt/src/main/resources/openapi.yaml")
     configOptions.set(mapOf(
-        "useJakartaEe" to "true"
+        "useJakartaEe" to "true",
+        "dateLibrary" to "java8"
     ))
 }</pre>
 </div>
 
 <div class="card">
-    <h2>7. Uso Práctico y Llamada de Métodos</h2>
+    <h2>7. Uso Práctico y Mapeo de Dominio</h2>
 
     <div class="grid">
         <div>
-            <h3>Implementando el Controller</h3>
-            <p>Usando el <code>Delegate Pattern</code>, tu código queda limpio:</p>
+            <h3>Implementación del Delegate</h3>
+            <p>El <code>DelegateImpl</code> inyecta el UseCase y el Mapper para transformar los datos:</p>
             <pre>
 @Service
-public class UserDelegateImpl implements UserApiDelegate {
+@RequiredArgsConstructor
+public class UserManagementDelegateImpl implements UserManagementApiDelegate {
+    private final UserServicePort userServicePort;
+    private final UserMapper userMapper;
+
     @Override
-    public ResponseEntity&lt;UserDTO&gt; getUser(Long id) {
-        // Tu lógica de negocio aquí
-        return ResponseEntity.ok(new UserDTO().id(id));
+    public ResponseEntity&lt;GetUserResponse&gt; createUser(PostUserRequest request) {
+        var userDomain = userMapper.toDomain(request);
+        var savedUser = userServicePort.save(userDomain);
+        return ResponseEntity.ok(new GetUserResponse()
+                .data(userMapper.toDto(savedUser)));
     }
 }</pre>
         </div>
         <div>
-            <h3>Invocando un Cliente</h3>
-            <p>Llamar a otro microservicio es tan simple como usar un objeto tipado:</p>
+            <h3>Consumo de Microservicios</h3>
+            <p>El <code>ExternalServiceAdapter</code> envuelve el cliente generado para cumplir con el puerto de salida:</p>
             <pre>
-// 1. Configurar el cliente (una vez)
-ApiClient client = new ApiClient().setBasePath("http://tasks-ms");
-TaskApi taskApi = new TaskApi(client);
+@Component
+@RequiredArgsConstructor
+public class TaskExternalServiceAdapter implements TaskExternalServicePort {
+    private final TaskManagementApi taskManagementApi;
 
-// 2. Llamar al método (con tipos reales)
-TaskDTO task = taskApi.getTaskById(123L);
-System.out.println(task.getName());</pre>
+    @Override
+    public List&lt;Task&gt; getTasksByUserId(Long userId) {
+        var response = taskManagementApi.getAllTasks(null, userId, 0, 10);
+        return response.getData().stream()
+                .map(this::toDomain)
+                .toList();
+    }
+}</pre>
         </div>
     </div>
 </div>
 
 <div class="card">
-    <h2>8. Ejemplo de Configuración Completa (Gradle)</h2>
+    <h2>8. Ejemplo de Configuración Completa (Gradle Kotlin DSL)</h2>
     <pre>
 openApiGenerate {
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
-    outputDir.set("$buildDir/generated/openapi")
-    configOptions.set([
-        delegatePattern: "true",
-        useSpringBoot4: "true",
-        interfaceOnly: "false"
-    ])
+    outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
+    configOptions.set(mapOf(
+        "delegatePattern" to "true",
+        "useSpringBoot3" to "true",
+        "useJakartaEe" to "true",
+        "interfaceOnly" to "false"
+    ))
 }</pre>
 </div>
 
 <div class="card">
-    <h2>9. Mejoras a Futuro</h2>
+    <h2>9. Estandarización de Mapeos (MapStruct)</h2>
+    <p>Para mantener el <b>Dominio Puro</b>, es obligatorio usar MapStruct para convertir entre DTOs generados y Entidades de Dominio. 
+        Esto evita que la capa de aplicación conozca los contratos externos.</p>
+    <pre>
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    User toDomain(PostUserRequest dto);
+    UserResponseDto toDto(User domain);
+}</pre>
+</div>
+
+<div class="card">
+    <h2>10. Futuro y Evolución</h2>
     <ul>
-        <li><span class="highlight">Embebido Automático de Librerías:</span> Integración transparente de librerías
-            desarrolladas internamente dentro del proceso de generación, asegurando que todos los microservicios
-            compartan la misma base lógica y utilitarios transversales sin configuración manual repetitiva.
-        </li>
-        <li><span class="highlight">CLI de Generación de Arquetipos:</span> Creación de una herramienta de línea de
-            comandos (CLI) que permita generar el arquetipo completo del microservicio a partir de la plantilla base,
-            tomando como parámetros de entrada el nombre del repositorio y el archivo OpenAPI inicial.
-        </li>
+        <li><span class="highlight">Automatización SPECT:</span> Integrar la validación automática de contratos YAML contra las especificaciones de negocio antes de la generación.</li>
+        <li><span class="highlight">CLI de Arquetipos:</span> Implementar un CLI para generar la estructura hexagonal completa (Ports, Adapters, Mappers) a partir de una nueva definición OpenAPI.</li>
     </ul>
 </div>
 
 <div class="footer">
-    <p>Propuesta generada para el equipo de Arquitectura y Desarrollo.</p>
+    <p>Documento técnico generado para el equipo de Arquitectura y Desarrollo.</p>
 </div>
 
 </body>
