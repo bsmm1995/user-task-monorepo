@@ -198,7 +198,26 @@
 </div>
 
 <div class="card">
-    <h2>4. Detalles Importantes</h2>
+    <h2>4. Posibles Desventajas</h2>
+    <p>Para sacar el máximo provecho a esta metodología, el equipo debe tener en cuenta algunos retos iniciales que se convierten en beneficios a largo plazo:</p>
+    <div class="grid">
+        <div>
+            <ul>
+                <li><span class="highlight">Inversión Inicial:</span> Aprender el flujo de OpenAPI y Hexagonal toma un poco de tiempo al principio, pero la estandarización acelera enormemente las entregas futuras.</li>
+                <li><span class="highlight">Estructura de Capas:</span> Aunque hay más archivos que en un MVC tradicional, esto garantiza que los cambios técnicos no afecten la lógica de negocio.</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li><span class="highlight">Disciplina de Contrato:</span> El YAML es nuestra guía. Mantenerlo actualizado elimina las sorpresas y malentendidos entre equipos.</li>
+                <li><span class="highlight">Mapeo Eficiente:</span> MapStruct automatiza la transformación de datos, permitiéndonos enfocarnos en resolver problemas de negocio reales.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>5. Detalles Importantes</h2>
     <p>Para APIs <b>RESTful</b>, esta herramienta es super ventajosa porque:</p>
     <ul>
         <li>Gestiona perfectamente la semántica de HTTP (códigos de estado, verbos, parámetros).</li>
@@ -210,7 +229,7 @@
 </div>
 
 <div class="card">
-    <h2>5. Prerrequisitos para la Adopción</h2>
+    <h2>6. Prerrequisitos para la Adopción</h2>
     <ul>
         <li><span class="badge">Herramientas</span> Gradle o Maven configurado con el plugin
             <code>org.openapi.generator</code>.
@@ -225,7 +244,7 @@
 </div>
 
 <div class="card">
-    <h2>6. Configuración de Capas: Servidor y Clientes</h2>
+    <h2>7. Configuración de Capas: Servidor y Clientes</h2>
 
     <h3>A. Capa Controller (Spring Server)</h3>
     <p>Utilizamos el generador <code>spring</code> con el perfil de <b>Spring Boot 3/4</b> y soporte para <b>Jakarta EE</b>. 
@@ -261,7 +280,7 @@ tasks.register&lt;GenerateTask&gt;("openApiGenerateClient") {
 </div>
 
 <div class="card">
-    <h2>7. Uso Práctico y Mapeo de Dominio</h2>
+    <h2>8. Uso Práctico y Mapeo de Dominio</h2>
 
     <div class="grid">
         <div>
@@ -305,7 +324,7 @@ public class TaskExternalServiceAdapter implements TaskExternalServicePort {
 </div>
 
 <div class="card">
-    <h2>8. Ejemplo de Configuración Completa (Gradle Kotlin DSL)</h2>
+    <h2>9. Ejemplo de Configuración Completa (Gradle Kotlin DSL)</h2>
     <pre>
 openApiGenerate {
     generatorName.set("spring")
@@ -321,7 +340,7 @@ openApiGenerate {
 </div>
 
 <div class="card">
-    <h2>9. Estandarización de Mapeos (MapStruct)</h2>
+    <h2>10. Estandarización de Mapeos (MapStruct)</h2>
     <p>Para mantener el <b>Dominio Puro</b>, es obligatorio usar MapStruct para convertir entre DTOs generados y Entidades de Dominio. 
         Esto evita que la capa de aplicación conozca los contratos externos.</p>
     <pre>
@@ -333,7 +352,7 @@ public interface UserMapper {
 </div>
 
 <div class="card">
-    <h2>10. Futuro y Evolución</h2>
+    <h2>11. Futuro y Evolución</h2>
     <ul>
         <li><span class="highlight">Automatización SPECT:</span> Integrar la validación automática de contratos YAML contra las especificaciones de negocio antes de la generación.</li>
         <li><span class="highlight">CLI de Arquetipos:</span> Implementar un CLI para generar la estructura hexagonal completa (Ports, Adapters, Mappers) a partir de una nueva definición OpenAPI.</li>
